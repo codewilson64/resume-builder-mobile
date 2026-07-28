@@ -1,9 +1,12 @@
+import "./global.css";
+import cv from "./assets/menu/cv.png"
+import cover_letter from "./assets/menu/letter.png"
 import {
   View,
   Text,
-  StyleSheet,
   Pressable,
   ScrollView,
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -31,16 +34,21 @@ export default function HomeScreen() {
   const router = useRouter();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
+    <SafeAreaView className="flex-1 bg-white">
+      <View className="flex-1 px-5 py-4">
 
         {/* Top Actions */}
-        <View style={styles.actions}>
+        <View className="gap-3">
           <Pressable
-            style={styles.actionButton}
+            className="h-[64px] flex-row items-center justify-between rounded-[14px] bg-gray-100 px-[18px]"
             onPress={() => router.push("/editor")}
           >
-            <Text style={styles.actionText}>Create Resume</Text>
+            <View className="flex-row items-center gap-3"> 
+              <Image source={cv} className="h-10 w-10" resizeMode="contain" /> 
+              <Text className="text-base font-semibold text-gray-900"> 
+                Create Resume 
+              </Text> 
+            </View>
 
             <MaterialIcons
               name="keyboard-arrow-right"
@@ -50,10 +58,15 @@ export default function HomeScreen() {
           </Pressable>
 
           <Pressable
-            style={styles.actionButton}
+            className="h-[64px] flex-row items-center justify-between rounded-[14px] bg-gray-100 px-[18px]"
             onPress={() => router.push("/cover-letter")}
           >
-            <Text style={styles.actionText}>Create Cover Letter</Text>
+            <View className="flex-row items-center gap-3"> 
+              <Image source={cover_letter} className="h-10 w-10" resizeMode="contain" /> 
+              <Text className="text-base font-semibold text-gray-900"> 
+                Create Cover Letter 
+              </Text> 
+            </View>
 
             <MaterialIcons
               name="keyboard-arrow-right"
@@ -64,25 +77,27 @@ export default function HomeScreen() {
         </View>
 
         {/* Resume List */}
-        <View style={styles.resumeSection}>
-          <Text style={styles.sectionTitle}>My Resumes</Text>
+        <View className="mt-8 flex-1">
+          <Text className="mb-4 text-2xl font-bold text-gray-900">
+            My Resumes
+          </Text>
 
           <ScrollView
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.resumeList}
+            contentContainerClassName="gap-3 pb-5"
           >
             {resumes.map((resume) => (
               <Pressable
                 key={resume.id}
-                style={styles.resumeCard}
+                className="min-h-[78px] flex-row items-center justify-between rounded-[14px] border border-gray-200 bg-gray-50 px-[18px] py-[14px]"
                 onPress={() => router.push("/editor")}
               >
-                <View style={styles.resumeInfo}>
-                  <Text style={styles.resumeTitle}>
+                <View className="flex-1">
+                  <Text className="mb-[5px] text-[17px] font-semibold text-gray-900">
                     {resume.title}
                   </Text>
 
-                  <Text style={styles.resumeUpdated}>
+                  <Text className="text-[13px] text-gray-500">
                     {resume.updated}
                   </Text>
                 </View>
@@ -98,7 +113,7 @@ export default function HomeScreen() {
         </View>
 
         {/* Ad */}
-        <View style={styles.adContainer}>
+        <View className="mt-3 min-h-[50px] items-center">
           <BannerAd
             unitId={TestIds.BANNER}
             size={BannerAdSize.BANNER}
@@ -109,88 +124,3 @@ export default function HomeScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
-  },
-
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-  },
-
-  actions: {
-    gap: 12,
-  },
-
-  actionButton: {
-    height: 58,
-    paddingHorizontal: 18,
-    borderRadius: 14,
-    backgroundColor: "#F3F4F6",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-
-  actionText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#111827",
-  },
-
-  resumeSection: {
-    flex: 1,
-    marginTop: 32,
-  },
-
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#111827",
-    marginBottom: 16,
-  },
-
-  resumeList: {
-    gap: 12,
-    paddingBottom: 20,
-  },
-
-  resumeCard: {
-    minHeight: 78,
-    paddingHorizontal: 18,
-    paddingVertical: 14,
-    borderRadius: 14,
-    backgroundColor: "#F9FAFB",
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-
-  resumeInfo: {
-    flex: 1,
-  },
-
-  resumeTitle: {
-    fontSize: 17,
-    fontWeight: "600",
-    color: "#111827",
-    marginBottom: 5,
-  },
-
-  resumeUpdated: {
-    fontSize: 13,
-    color: "#6B7280",
-  },
-
-  adContainer: {
-    alignItems: "center",
-    minHeight: 50,
-    marginTop: 12,
-  },
-});
