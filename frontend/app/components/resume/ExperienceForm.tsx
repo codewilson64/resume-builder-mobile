@@ -8,6 +8,7 @@ import {
   Platform,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { formatDate } from "@/app/utils/formatDate";
 
 export default function ExperienceForm() {
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -15,15 +16,6 @@ export default function ExperienceForm() {
 
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
-
-  const formatDate = (date: Date | null) => {
-    if (!date) return "";
-
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      year: "numeric",
-    });
-  };
 
   return (
     <View className="gap-6">

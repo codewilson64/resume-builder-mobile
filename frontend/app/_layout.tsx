@@ -16,6 +16,9 @@ export default function RootLayout() {
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="editor" options={{ headerShown: false }} />
         <Stack.Screen name="experience" options={{ headerShown: false }} />
+        <Stack.Screen name="education" options={{ headerShown: false }} />
+        <Stack.Screen name="skill" options={{ headerShown: false }} />
+        <Stack.Screen name="about" options={{ headerShown: false }} />
       </Stack>
     </SafeAreaProvider>
   );
