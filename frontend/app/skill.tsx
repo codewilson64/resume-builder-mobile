@@ -3,6 +3,7 @@ import {
   Text,
   ScrollView,
   Pressable,
+  KeyboardAvoidingView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -14,7 +15,11 @@ export default function SkillsPage() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <View className="flex-1">
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior="padding"
+        keyboardVerticalOffset={0}
+      >
 
         {/* Main Content */}
         <ScrollView
@@ -68,7 +73,7 @@ export default function SkillsPage() {
           </Pressable>
         </View>
 
-      </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

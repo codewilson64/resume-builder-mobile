@@ -1,11 +1,19 @@
-import { View, Text, TextInput, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+} from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useResumeStore } from "../../store/resumeStore";
 
 export default function SkillsForm() {
+  const { skill, updateSkill } = useResumeStore();
+
   return (
     <View className="gap-6">
 
-      {/* Skill 1 */}
+      {/* Skill */}
       <View>
         <Text className="mb-2 text-sm font-medium text-gray-700">
           Skill
@@ -16,6 +24,10 @@ export default function SkillsForm() {
             className="h-12 flex-1 border-b border-gray-300 px-1 text-base text-gray-900"
             placeholder="e.g. JavaScript"
             placeholderTextColor="#9CA3AF"
+            value={skill.name}
+            onChangeText={(value) =>
+              updateSkill("name", value)
+            }
           />
 
           <Pressable className="ml-3 h-10 w-10 items-center justify-center">
@@ -28,7 +40,7 @@ export default function SkillsForm() {
         </View>
       </View>
 
-      {/* Add Skill */}
+      {/* Add Skill - UI only for now */}
       <Pressable className="flex-row items-center self-start">
         <MaterialIcons
           name="add"

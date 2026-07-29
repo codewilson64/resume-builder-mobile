@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   View,
   Text,
@@ -7,12 +6,14 @@ import {
   Pressable,
   Platform,
 } from "react-native";
+import { useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
+
 import { formatDate } from "@/app/utils/formatDate";
+import { useResumeStore } from "@/app/store/resumeStore";
 
 export default function ExperienceForm() {
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
+  const { experience, updateExperience } = useResumeStore();
 
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
@@ -30,6 +31,10 @@ export default function ExperienceForm() {
           className="h-12 border-b border-gray-300 px-1 text-base text-gray-900"
           placeholder="Software Engineer"
           placeholderTextColor="#9CA3AF"
+          value={experience.jobTitle}
+          onChangeText={(value) =>
+            updateExperience("jobTitle", value)
+          }
         />
       </View>
 
@@ -43,6 +48,10 @@ export default function ExperienceForm() {
           className="h-12 border-b border-gray-300 px-1 text-base text-gray-900"
           placeholder="Company Name"
           placeholderTextColor="#9CA3AF"
+          value={experience.companyName}
+          onChangeText={(value) =>
+            updateExperience("companyName", value)
+          }
         />
       </View>
 
@@ -61,25 +70,34 @@ export default function ExperienceForm() {
           >
             <Text
               className={
-                startDate
+                experience.startDate
                   ? "text-base text-gray-900"
                   : "text-base text-gray-400"
               }
             >
-              {startDate ? formatDate(startDate) : "Select date"}
+              {experience.startDate
+                ? formatDate(new Date(experience.startDate))
+                : "Select date"}
             </Text>
           </Pressable>
 
           {showStartPicker && (
             <DateTimePicker
-              value={startDate || new Date()}
+              value={
+                experience.startDate
+                  ? new Date(experience.startDate)
+                  : new Date()
+              }
               mode="date"
               display={Platform.OS === "ios" ? "spinner" : "default"}
               onChange={(event, selectedDate) => {
                 setShowStartPicker(false);
 
                 if (selectedDate) {
-                  setStartDate(selectedDate);
+                  updateExperience(
+                    "startDate",
+                    selectedDate.toISOString()
+                  );
                 }
               }}
             />
@@ -98,25 +116,38 @@ export default function ExperienceForm() {
           >
             <Text
               className={
-                endDate
+                experience.endDate
                   ? "text-base text-gray-900"
                   : "text-base text-gray-400"
               }
             >
-              {endDate ? formatDate(endDate) : "Select date"}
+              {experience.endDate
+                ? formatDate(new Date(experience.endDate))
+                : "Select date"}
             </Text>
           </Pressable>
 
           {showEndPicker && (
             <DateTimePicker
-              value={endDate || new Date()}
+              value={
+                experience.endDate
+                  ? new Date(experience.endDate)
+                  : new Date()
+              }
               mode="date"
-              display={Platform.OS === "ios" ? "spinner" : "default"}
+              display={
+                Platform.OS === "ios"
+                  ? "spinner"
+                  : "default"
+              }
               onChange={(event, selectedDate) => {
                 setShowEndPicker(false);
 
                 if (selectedDate) {
-                  setEndDate(selectedDate);
+                  updateExperience(
+                    "endDate",
+                    selectedDate.toISOString()
+                  );
                 }
               }}
             />
@@ -134,7 +165,13 @@ export default function ExperienceForm() {
         </View>
 
         <Switch
-          value={false}
+          value={experience.currentlyWorkHere}
+          onValueChange={(value) =>
+            updateExperience(
+              "currentlyWorkHere",
+              value
+            )
+          }
           trackColor={{
             false: "#D1D5DB",
             true: "#67E8F9",
@@ -153,6 +190,10 @@ export default function ExperienceForm() {
           className="h-12 border-b border-gray-300 px-1 text-base text-gray-900"
           placeholder="Medan"
           placeholderTextColor="#9CA3AF"
+          value={experience.city}
+          onChangeText={(value) =>
+            updateExperience("city", value)
+          }
         />
       </View>
 
@@ -168,6 +209,13 @@ export default function ExperienceForm() {
           placeholderTextColor="#9CA3AF"
           multiline
           textAlignVertical="top"
+          value={experience.jobDescription}
+          onChangeText={(value) =>
+            updateExperience(
+              "jobDescription",
+              value
+            )
+          }
         />
       </View>
 

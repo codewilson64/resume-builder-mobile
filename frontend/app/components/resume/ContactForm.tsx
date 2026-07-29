@@ -1,6 +1,9 @@
+import { useResumeStore } from "@/app/store/resumeStore";
 import { View, Text, TextInput } from "react-native";
 
 export default function ContactForm() {
+  const { contact, updateContact } = useResumeStore();
+
   return (
     <View className="gap-6">
 
@@ -16,6 +19,10 @@ export default function ContactForm() {
             className="h-12 border-b border-gray-300 text-base text-gray-900"
             placeholder="John"
             placeholderTextColor="#9CA3AF"
+            value={contact.firstName}
+            onChangeText={(value) =>
+              updateContact("firstName", value)
+            }
           />
         </View>
 
@@ -28,6 +35,10 @@ export default function ContactForm() {
             className="h-12 border-b border-gray-300 text-base text-gray-900"
             placeholder="Doe"
             placeholderTextColor="#9CA3AF"
+            value={contact.lastName}
+            onChangeText={(value) =>
+              updateContact("lastName", value)
+            }
           />
         </View>
 
@@ -45,6 +56,10 @@ export default function ContactForm() {
           placeholderTextColor="#9CA3AF"
           keyboardType="email-address"
           autoCapitalize="none"
+          value={contact.email}
+          onChangeText={(value) =>
+            updateContact("email", value)
+          }
         />
       </View>
 
@@ -58,6 +73,10 @@ export default function ContactForm() {
           className="h-12 border-b border-gray-300 text-base text-gray-900"
           placeholder="Enter a location"
           placeholderTextColor="#9CA3AF"
+          value={contact.address}
+          onChangeText={(value) =>
+            updateContact("address", value)
+          }
         />
       </View>
 
@@ -72,6 +91,10 @@ export default function ContactForm() {
           placeholder="(555)123-4567"
           placeholderTextColor="#9CA3AF"
           keyboardType="phone-pad"
+          value={contact.phone}
+          onChangeText={(value) =>
+            updateContact("phone", value)
+          }
         />
       </View>
 
@@ -87,6 +110,10 @@ export default function ContactForm() {
             className="h-12 border-b border-gray-300 text-base text-gray-900"
             placeholder="New York"
             placeholderTextColor="#9CA3AF"
+            value={contact.city}
+            onChangeText={(value) =>
+              updateContact("city", value)
+            }
           />
         </View>
 
@@ -100,6 +127,10 @@ export default function ContactForm() {
             placeholder="20111"
             placeholderTextColor="#9CA3AF"
             keyboardType="numeric"
+            value={contact.postalCode}
+            onChangeText={(value) =>
+              updateContact("postalCode", value)
+            }
           />
         </View>
 

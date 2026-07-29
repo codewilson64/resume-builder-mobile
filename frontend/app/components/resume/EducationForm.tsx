@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   View,
   Text,
@@ -6,15 +5,20 @@ import {
   Pressable,
   Platform,
 } from "react-native";
+import { useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { formatDate } from "../../utils/formatDate"; 
+
+import { formatDate } from "../../utils/formatDate";
+import { useResumeStore } from "@/app/store/resumeStore";
 
 export default function EducationForm() {
-  const [graduationDate, setGraduationDate] = useState<Date | null>(null);
+  const { education, updateEducation } = useResumeStore();
+
   const [showGraduationPicker, setShowGraduationPicker] = useState(false);
 
   return (
     <View className="gap-6">
+
       {/* School */}
       <View>
         <Text className="mb-2 text-sm font-medium text-gray-700">
@@ -25,6 +29,10 @@ export default function EducationForm() {
           className="h-12 border-b border-gray-300 px-1 text-base text-gray-900"
           placeholder="University Name"
           placeholderTextColor="#9CA3AF"
+          value={education.school}
+          onChangeText={(value) =>
+            updateEducation("school", value)
+          }
         />
       </View>
 
@@ -38,6 +46,10 @@ export default function EducationForm() {
           className="h-12 border-b border-gray-300 px-1 text-base text-gray-900"
           placeholder="Bachelor of Science"
           placeholderTextColor="#9CA3AF"
+          value={education.degree}
+          onChangeText={(value) =>
+            updateEducation("degree", value)
+          }
         />
       </View>
 
@@ -53,25 +65,40 @@ export default function EducationForm() {
         >
           <Text
             className={
-              graduationDate
+              education.graduationDate
                 ? "text-base text-gray-900"
                 : "text-base text-gray-400"
             }
           >
-            {graduationDate ? formatDate(graduationDate) : "Select date"}
+            {education.graduationDate
+              ? formatDate(
+                  new Date(education.graduationDate)
+                )
+              : "Select date"}
           </Text>
         </Pressable>
 
         {showGraduationPicker && (
           <DateTimePicker
-            value={graduationDate || new Date()}
+            value={
+              education.graduationDate
+                ? new Date(education.graduationDate)
+                : new Date()
+            }
             mode="date"
-            display={Platform.OS === "ios" ? "spinner" : "default"}
+            display={
+              Platform.OS === "ios"
+                ? "spinner"
+                : "default"
+            }
             onChange={(event, selectedDate) => {
               setShowGraduationPicker(false);
 
               if (selectedDate) {
-                setGraduationDate(selectedDate);
+                updateEducation(
+                  "graduationDate",
+                  selectedDate.toISOString()
+                );
               }
             }}
           />
@@ -88,6 +115,10 @@ export default function EducationForm() {
           className="h-12 border-b border-gray-300 px-1 text-base text-gray-900"
           placeholder="Medan"
           placeholderTextColor="#9CA3AF"
+          value={education.city}
+          onChangeText={(value) =>
+            updateEducation("city", value)
+          }
         />
       </View>
 
@@ -103,8 +134,13 @@ export default function EducationForm() {
           placeholderTextColor="#9CA3AF"
           multiline
           textAlignVertical="top"
+          value={education.description}
+          onChangeText={(value) =>
+            updateEducation("description", value)
+          }
         />
       </View>
+
     </View>
   );
 }
