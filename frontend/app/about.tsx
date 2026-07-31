@@ -15,7 +15,7 @@ export default function AboutPage() {
   const router = useRouter();
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-50">
+    <SafeAreaView className="flex-1 bg-white">
       <KeyboardAvoidingView
         className="flex-1"
         behavior="padding"
@@ -57,7 +57,7 @@ export default function AboutPage() {
         </ScrollView>
 
         {/* Fixed Bottom Button */}
-        <View className="absolute bottom-0 left-0 right-0 border-t border-gray-200 bg-slate-50 px-5 py-4">
+        <View className="absolute bottom-0 left-0 right-0 bg-white px-5 py-4">
           <Pressable
             onPress={() => router.push("/preview")}
             className="h-14 flex-row items-center justify-center rounded-lg bg-cyan-400"
