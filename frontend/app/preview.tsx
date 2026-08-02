@@ -18,12 +18,12 @@ import { downloadResumePDF } from "./utils/generateResumePDF";
 export default function PreviewPage() {
   const router = useRouter();
   const [isGenerating, setIsGenerating] = useState(false);
-  const { contact, about, experience, education, skill } = useResumeStore();
+  const { contact, about, experiences, educations, skills } = useResumeStore();
 
   const handleDownload = async () => {
     try {
       setIsGenerating(true);
-      await downloadResumePDF({ contact, about, experience, education, skill });
+      await downloadResumePDF({ contact, about, experiences, educations, skills });
     } finally {
       setIsGenerating(false);
     }

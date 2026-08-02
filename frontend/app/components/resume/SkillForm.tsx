@@ -1,58 +1,35 @@
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-} from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useResumeStore } from "../../store/resumeStore";
+import { View, Text, TextInput } from "react-native";
+import { useResumeStore } from "@/app/store/resumeStore";
 
-export default function SkillsForm() {
-  const { skill, updateSkill } = useResumeStore();
+type Props = {
+  skillId: string;
+};
+
+export default function SkillForm({ skillId }: Props) {
+  const skill = useResumeStore((state) => state.skills.find((item) => item.id === skillId));
+  const updateSkill = useResumeStore((state) => state.updateSkill);
+
+  if (!skill) {
+    return (
+      <View>
+        <Text className="text-gray-500">Skill not found</Text>
+      </View>
+    );
+  }
 
   return (
     <View className="gap-6">
-
-      {/* Skill */}
       <View>
-        <Text className="mb-2 text-sm font-medium text-gray-700">
-          Skill
-        </Text>
-
-        <View className="flex-row items-center">
-          <TextInput
-            className="h-12 flex-1 border-b border-gray-300 px-1 text-base text-gray-900"
-            placeholder="e.g. JavaScript"
-            placeholderTextColor="#9CA3AF"
-            value={skill.name}
-            onChangeText={(value) =>
-              updateSkill("name", value)
-            }
-          />
-
-          <Pressable className="ml-3 h-10 w-10 items-center justify-center">
-            <MaterialIcons
-              name="delete-outline"
-              size={22}
-              color="#6B7280"
-            />
-          </Pressable>
-        </View>
-      </View>
-
-      {/* Add Skill - UI only for now */}
-      <Pressable className="flex-row items-center self-start">
-        <MaterialIcons
-          name="add"
-          size={22}
-          color="#06B6D4"
+        <Text className="mb-2 text-sm font-medium text-gray-700">Skill</Text>
+        <TextInput
+          className="h-12 border-b border-gray-300 px-1 text-base text-gray-900"
+          placeholder="e.g. JavaScript"
+          placeholderTextColor="#9CA3AF"
+          value={skill.name}
+          onChangeText={(value) => updateSkill(skillId, "name", value)}
+          autoFocus
         />
-
-        <Text className="ml-1 text-base font-medium text-cyan-500">
-          Add another skill
-        </Text>
-      </Pressable>
-
+      </View>
     </View>
   );
 }

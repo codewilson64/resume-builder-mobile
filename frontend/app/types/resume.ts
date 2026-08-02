@@ -9,6 +9,7 @@ export type ContactDetails = {
 };
 
 export type Experience = {
+  id: string; 
   jobTitle: string;
   companyName: string;
   startDate: string | null;
@@ -19,6 +20,7 @@ export type Experience = {
 };
 
 export type Education = {
+  id: string;
   school: string;
   degree: string;
   graduationDate: string | null;
@@ -27,9 +29,18 @@ export type Education = {
 };
 
 export type Skill = {
+  id: string;
   name: string;
 };
 
 export type About = {
   summary: string;
+};
+
+export type ResumeData = {
+  contact: ContactDetails;
+  about: About;
+  experiences: Experience[];
+  educations: Education[];
+  skills: Skill[];
 };

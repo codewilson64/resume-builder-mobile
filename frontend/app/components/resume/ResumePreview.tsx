@@ -10,7 +10,7 @@ const A4_HEIGHT = 1123;
 const scale = (screenWidth - 40) / A4_WIDTH;
 
 export default function ResumePreview() {
-  const { contact, about, experience, education, skill } = useResumeStore();
+  const { contact, about, experiences, educations, skills } = useResumeStore();
 
   const fullName = `${contact?.firstName ?? ""} ${contact?.lastName ?? ""}`.trim();
 
@@ -21,15 +21,12 @@ export default function ResumePreview() {
     contact?.city ||
     contact?.postalCode;
 
-  const hasExperience =
-    experience?.jobTitle ||
-    experience?.companyName ||
-    experience?.jobDescription;
+  const hasExperiences = experiences.length > 0;
+  const hasEducations = educations.length > 0;
+  const hasSkills = skills.length > 0;
 
-  const hasEducation =
-    education?.school ||
-    education?.degree ||
-    education?.description;
+  // Use the most recent job title for the header (optional)
+  const latestJobTitle = experiences[0]?.jobTitle;
 
   return (
     <View
@@ -43,10 +40,8 @@ export default function ResumePreview() {
           width: A4_WIDTH,
           height: A4_HEIGHT,
           backgroundColor: "white",
-
           transform: [{ scale }],
           transformOrigin: "top",
-
           elevation: 3,
           shadowColor: "#000",
           shadowOffset: { width: 0, height: 2 },
@@ -60,9 +55,9 @@ export default function ResumePreview() {
             {fullName || "Your Name"}
           </Text>
 
-          {experience?.jobTitle ? (
+          {latestJobTitle ? (
             <Text className="mt-2 text-base text-gray-300">
-              {experience.jobTitle}
+              {latestJobTitle}
             </Text>
           ) : null}
 
@@ -70,21 +65,14 @@ export default function ResumePreview() {
             <View className="mt-5">
               <View className="flex-row flex-wrap gap-x-4 gap-y-2">
                 {contact.email ? (
-                  <Text className="text-sm text-gray-300">
-                    {contact.email}
-                  </Text>
+                  <Text className="text-sm text-gray-300">{contact.email}</Text>
                 ) : null}
-
                 {contact.phone ? (
-                  <Text className="text-sm text-gray-300">
-                    {contact.phone}
-                  </Text>
+                  <Text className="text-sm text-gray-300">{contact.phone}</Text>
                 ) : null}
               </View>
 
-              {(contact.address ||
-                contact.city ||
-                contact.postalCode) && (
+              {(contact.address || contact.city || contact.postalCode) && (
                 <Text className="mt-2 text-sm text-gray-300">
                   {[contact.address, contact.city, contact.postalCode]
                     .filter(Boolean)
@@ -106,95 +94,106 @@ export default function ResumePreview() {
             </ResumeSection>
           ) : null}
 
-          {/* Experience */}
-          {hasExperience ? (
+          {/* Experiences */}
+          {hasExperiences ? (
             <ResumeSection title="Experience">
-              <View>
-                {experience.jobTitle ? (
-                  <Text className="text-base font-semibold text-gray-900">
-                    {experience.jobTitle}
-                  </Text>
-                ) : null}
+              <View className="gap-6">
+                {experiences.map((exp) => (
+                  <View key={exp.id}>
+                    {exp.jobTitle ? (
+                      <Text className="text-base font-semibold text-gray-900">
+                        {exp.jobTitle}
+                      </Text>
+                    ) : null}
 
-                {experience.companyName ? (
-                  <Text className="mt-1 text-sm font-medium text-gray-600">
-                    {experience.companyName}
-                  </Text>
-                ) : null}
+                    {exp.companyName ? (
+                      <Text className="mt-1 text-sm font-medium text-gray-600">
+                        {exp.companyName}
+                      </Text>
+                    ) : null}
 
-                {(experience.startDate ||
-                  experience.endDate ||
-                  experience.currentlyWorkHere) && (
-                  <Text className="mt-1 text-xs text-gray-500">
-                    {formatDate(experience.startDate)}
-                    {experience.startDate ? " - " : ""}
-                    {experience.currentlyWorkHere
-                      ? "Present"
-                      : formatDate(experience.endDate)}
-                  </Text>
-                )}
+                    {(exp.startDate || exp.endDate || exp.currentlyWorkHere) && (
+                      <Text className="mt-1 text-xs text-gray-500">
+                        {formatDate(exp.startDate)}
+                        {exp.startDate ? " - " : ""}
+                        {exp.currentlyWorkHere
+                          ? "Present"
+                          : formatDate(exp.endDate)}
+                      </Text>
+                    )}
 
-                {experience.city ? (
-                  <Text className="mt-1 text-xs text-gray-500">
-                    {experience.city}
-                  </Text>
-                ) : null}
+                    {exp.city ? (
+                      <Text className="mt-1 text-xs text-gray-500">
+                        {exp.city}
+                      </Text>
+                    ) : null}
 
-                {experience.jobDescription ? (
-                  <Text className="mt-3 text-sm leading-6 text-gray-700">
-                    {experience.jobDescription}
-                  </Text>
-                ) : null}
+                    {exp.jobDescription ? (
+                      <Text className="mt-3 text-sm leading-6 text-gray-700">
+                        {exp.jobDescription}
+                      </Text>
+                    ) : null}
+                  </View>
+                ))}
               </View>
             </ResumeSection>
           ) : null}
 
-          {/* Education */}
-          {hasEducation ? (
+          {/* Educations */}
+          {hasEducations ? (
             <ResumeSection title="Education">
-              <View>
-                {education.degree ? (
-                  <Text className="text-base font-semibold text-gray-900">
-                    {education.degree}
-                  </Text>
-                ) : null}
+              <View className="gap-6">
+                {educations.map((edu) => (
+                  <View key={edu.id}>
+                    {edu.degree ? (
+                      <Text className="text-base font-semibold text-gray-900">
+                        {edu.degree}
+                      </Text>
+                    ) : null}
 
-                {education.school ? (
-                  <Text className="mt-1 text-sm font-medium text-gray-600">
-                    {education.school}
-                  </Text>
-                ) : null}
+                    {edu.school ? (
+                      <Text className="mt-1 text-sm font-medium text-gray-600">
+                        {edu.school}
+                      </Text>
+                    ) : null}
 
-                {education.graduationDate ? (
-                  <Text className="mt-1 text-xs text-gray-500">
-                    Graduated {formatDate(education.graduationDate)}
-                  </Text>
-                ) : null}
+                    {edu.graduationDate ? (
+                      <Text className="mt-1 text-xs text-gray-500">
+                        Graduated {formatDate(edu.graduationDate)}
+                      </Text>
+                    ) : null}
 
-                {education.city ? (
-                  <Text className="mt-1 text-xs text-gray-500">
-                    {education.city}
-                  </Text>
-                ) : null}
+                    {edu.city ? (
+                      <Text className="mt-1 text-xs text-gray-500">
+                        {edu.city}
+                      </Text>
+                    ) : null}
 
-                {education.description ? (
-                  <Text className="mt-3 text-sm leading-6 text-gray-700">
-                    {education.description}
-                  </Text>
-                ) : null}
+                    {edu.description ? (
+                      <Text className="mt-3 text-sm leading-6 text-gray-700">
+                        {edu.description}
+                      </Text>
+                    ) : null}
+                  </View>
+                ))}
               </View>
             </ResumeSection>
           ) : null}
 
           {/* Skills */}
-          {skill?.name ? (
+          {hasSkills ? (
             <ResumeSection title="Skills">
-              <View className="flex-row flex-wrap">
-                <View className="rounded-md bg-gray-100 px-3 py-2">
-                  <Text className="text-sm text-gray-700">
-                    {skill.name}
-                  </Text>
-                </View>
+              <View className="flex-row flex-wrap gap-2">
+                {skills.map((skill) =>
+                  skill.name ? (
+                    <View
+                      key={skill.id}
+                      className="rounded-md bg-gray-100 px-3 py-2"
+                    >
+                      <Text className="text-sm text-gray-700">{skill.name}</Text>
+                    </View>
+                  ) : null
+                )}
               </View>
             </ResumeSection>
           ) : null}
@@ -216,9 +215,7 @@ function ResumeSection({
       <Text className="mb-3 text-sm font-bold uppercase tracking-wider text-gray-900">
         {title}
       </Text>
-
       <View className="mb-4 h-px bg-gray-200" />
-
       {children}
     </View>
   );

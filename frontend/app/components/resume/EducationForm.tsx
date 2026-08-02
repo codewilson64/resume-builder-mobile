@@ -11,44 +11,50 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { formatDate } from "../../utils/formatDate";
 import { useResumeStore } from "@/app/store/resumeStore";
 
-export default function EducationForm() {
-  const { education, updateEducation } = useResumeStore();
+type Props = {
+  educationId: string;
+};
+
+export default function EducationForm({ educationId }: Props) {
+  const education = useResumeStore((state) => state.educations.find((item) => item.id === educationId));
+  const updateEducation = useResumeStore((state) => state.updateEducation);
 
   const [showGraduationPicker, setShowGraduationPicker] = useState(false);
 
+  if (!education) {
+    return (
+      <View>
+        <Text className="text-gray-500">Education not found</Text>
+      </View>
+    );
+  }
+
   return (
     <View className="gap-6">
-
       {/* School */}
       <View>
-        <Text className="mb-2 text-sm font-medium text-gray-700">
-          School
-        </Text>
-
+        <Text className="mb-2 text-sm font-medium text-gray-700">School</Text>
         <TextInput
           className="h-12 border-b border-gray-300 px-1 text-base text-gray-900"
           placeholder="University Name"
           placeholderTextColor="#9CA3AF"
           value={education.school}
           onChangeText={(value) =>
-            updateEducation("school", value)
+            updateEducation(educationId, "school", value)
           }
         />
       </View>
 
       {/* Degree */}
       <View>
-        <Text className="mb-2 text-sm font-medium text-gray-700">
-          Degree
-        </Text>
-
+        <Text className="mb-2 text-sm font-medium text-gray-700">Degree</Text>
         <TextInput
           className="h-12 border-b border-gray-300 px-1 text-base text-gray-900"
           placeholder="Bachelor of Science"
           placeholderTextColor="#9CA3AF"
           value={education.degree}
           onChangeText={(value) =>
-            updateEducation("degree", value)
+            updateEducation(educationId, "degree", value)
           }
         />
       </View>
@@ -58,7 +64,6 @@ export default function EducationForm() {
         <Text className="mb-2 text-sm font-medium text-gray-700">
           Graduation Date
         </Text>
-
         <Pressable
           onPress={() => setShowGraduationPicker(true)}
           className="h-12 justify-center border-b border-gray-300 px-1"
@@ -71,9 +76,7 @@ export default function EducationForm() {
             }
           >
             {education.graduationDate
-              ? formatDate(
-                  new Date(education.graduationDate)
-                )
+              ? formatDate(new Date(education.graduationDate))
               : "Select date"}
           </Text>
         </Pressable>
@@ -86,16 +89,12 @@ export default function EducationForm() {
                 : new Date()
             }
             mode="date"
-            display={
-              Platform.OS === "ios"
-                ? "spinner"
-                : "default"
-            }
-            onChange={(event, selectedDate) => {
+            display={Platform.OS === "ios" ? "spinner" : "default"}
+            onChange={(_, selectedDate) => {
               setShowGraduationPicker(false);
-
               if (selectedDate) {
                 updateEducation(
+                  educationId,
                   "graduationDate",
                   selectedDate.toISOString()
                 );
@@ -107,17 +106,14 @@ export default function EducationForm() {
 
       {/* City */}
       <View>
-        <Text className="mb-2 text-sm font-medium text-gray-700">
-          City
-        </Text>
-
+        <Text className="mb-2 text-sm font-medium text-gray-700">City</Text>
         <TextInput
           className="h-12 border-b border-gray-300 px-1 text-base text-gray-900"
           placeholder="Medan"
           placeholderTextColor="#9CA3AF"
           value={education.city}
           onChangeText={(value) =>
-            updateEducation("city", value)
+            updateEducation(educationId, "city", value)
           }
         />
       </View>
@@ -127,7 +123,6 @@ export default function EducationForm() {
         <Text className="mb-2 text-sm font-medium text-gray-700">
           Description
         </Text>
-
         <TextInput
           className="min-h-[120px] border-b border-gray-300 px-1 py-3 text-base text-gray-900"
           placeholder="Describe your studies, achievements, and relevant coursework..."
@@ -136,11 +131,10 @@ export default function EducationForm() {
           textAlignVertical="top"
           value={education.description}
           onChangeText={(value) =>
-            updateEducation("description", value)
+            updateEducation(educationId, "description", value)
           }
         />
       </View>
-
     </View>
   );
 }

@@ -5,19 +5,19 @@ import { formatDate } from "@/app/utils/formatDate";
 import { About, ContactDetails, Education, Experience, Skill } from "../types/resume";
 
 export type ResumeData = {
-  contact: ContactDetails | null;
-  about: About | null;
-  experience: Experience | null;
-  education: Education | null;
-  skill: Skill | null;
+  contact: ContactDetails;
+  about: About;
+  experiences: Experience[];
+  educations: Education[];
+  skills: Skill[];
 };
 
 export function generateResumeHTML({
   contact,
   about,
-  experience,
-  education,
-  skill,
+  experiences,
+  educations,
+  skills,
 }: ResumeData): string {
   const fullName = `${contact?.firstName ?? ""} ${contact?.lastName ?? ""}`.trim();
 
@@ -28,30 +28,59 @@ export function generateResumeHTML({
     contact?.city ||
     contact?.postalCode;
 
-  const hasExperience =
-    experience?.jobTitle ||
-    experience?.companyName ||
-    experience?.jobDescription;
+  const hasExperiences = experiences.length > 0;
+  const hasEducations = educations.length > 0;
+  const hasSkills = skills.length > 0;
 
-  const hasEducation =
-    education?.school ||
-    education?.degree ||
-    education?.description;
+  const latestJobTitle = experiences[0]?.jobTitle;
 
   const addressLine = [contact?.address, contact?.city, contact?.postalCode]
     .filter(Boolean)
     .join(", ");
 
-  const experienceDate =
-    experience?.startDate || experience?.endDate || experience?.currentlyWorkHere
-      ? `${formatDate(experience?.startDate)}${
-          experience?.startDate ? " - " : ""
-        }${
-          experience?.currentlyWorkHere
-            ? "Present"
-            : formatDate(experience?.endDate)
-        }`
-      : "";
+  const experienceItems = experiences
+    .map((exp) => {
+      const dateRange =
+        exp.startDate || exp.endDate || exp.currentlyWorkHere
+          ? `${formatDate(exp.startDate)}${exp.startDate ? " - " : ""}${
+              exp.currentlyWorkHere ? "Present" : formatDate(exp.endDate)
+            }`
+          : "";
+
+      return `
+        <div style="margin-bottom: 20px;">
+          ${exp.jobTitle ? `<div class="item-title">${exp.jobTitle}</div>` : ""}
+          ${exp.companyName ? `<div class="item-subtitle">${exp.companyName}</div>` : ""}
+          ${dateRange ? `<div class="meta">${dateRange}</div>` : ""}
+          ${exp.city ? `<div class="meta">${exp.city}</div>` : ""}
+          ${exp.jobDescription ? `<div class="body-text">${exp.jobDescription}</div>` : ""}
+        </div>
+      `;
+    })
+    .join("");
+
+  const educationItems = educations
+    .map((edu) => {
+      return `
+        <div style="margin-bottom: 20px;">
+          ${edu.degree ? `<div class="item-title">${edu.degree}</div>` : ""}
+          ${edu.school ? `<div class="item-subtitle">${edu.school}</div>` : ""}
+          ${
+            edu.graduationDate
+              ? `<div class="meta">Graduated ${formatDate(edu.graduationDate)}</div>`
+              : ""
+          }
+          ${edu.city ? `<div class="meta">${edu.city}</div>` : ""}
+          ${edu.description ? `<div class="body-text">${edu.description}</div>` : ""}
+        </div>
+      `;
+    })
+    .join("");
+
+  const skillItems = skills
+    .filter((s) => s.name)
+    .map((s) => `<span class="skill">${s.name}</span>`)
+    .join("");
 
   return `
 <!DOCTYPE html>
@@ -133,16 +162,17 @@ export function generateResumeHTML({
       padding: 6px 12px;
       font-size: 13px;
       color: #374151;
+      margin-right: 8px;
+      margin-bottom: 8px;
     }
   </style>
 </head>
 <body>
-  <!-- Header -->
   <div class="header">
     <div class="name">${fullName || "Your Name"}</div>
     ${
-      experience?.jobTitle
-        ? `<div class="job-title-header">${experience.jobTitle}</div>`
+      latestJobTitle
+        ? `<div class="job-title-header">${latestJobTitle}</div>`
         : ""
     }
     ${
@@ -156,7 +186,6 @@ export function generateResumeHTML({
     }
   </div>
 
-  <!-- Content -->
   <div class="content">
     ${
       about?.summary
@@ -169,81 +198,31 @@ export function generateResumeHTML({
     }
 
     ${
-      hasExperience
+      hasExperiences
         ? `<div class="section">
             <div class="section-title">Experience</div>
             <div class="divider"></div>
-            ${
-              experience?.jobTitle
-                ? `<div class="item-title">${experience.jobTitle}</div>`
-                : ""
-            }
-            ${
-              experience?.companyName
-                ? `<div class="item-subtitle">${experience.companyName}</div>`
-                : ""
-            }
-            ${
-              experienceDate
-                ? `<div class="meta">${experienceDate}</div>`
-                : ""
-            }
-            ${
-              experience?.city
-                ? `<div class="meta">${experience.city}</div>`
-                : ""
-            }
-            ${
-              experience?.jobDescription
-                ? `<div class="body-text">${experience.jobDescription}</div>`
-                : ""
-            }
+            ${experienceItems}
           </div>`
         : ""
     }
 
     ${
-      hasEducation
+      hasEducations
         ? `<div class="section">
             <div class="section-title">Education</div>
             <div class="divider"></div>
-            ${
-              education?.degree
-                ? `<div class="item-title">${education.degree}</div>`
-                : ""
-            }
-            ${
-              education?.school
-                ? `<div class="item-subtitle">${education.school}</div>`
-                : ""
-            }
-            ${
-              education?.graduationDate
-                ? `<div class="meta">Graduated ${formatDate(
-                    education.graduationDate
-                  )}</div>`
-                : ""
-            }
-            ${
-              education?.city
-                ? `<div class="meta">${education.city}</div>`
-                : ""
-            }
-            ${
-              education?.description
-                ? `<div class="body-text">${education.description}</div>`
-                : ""
-            }
+            ${educationItems}
           </div>`
         : ""
     }
 
     ${
-      skill?.name
+      hasSkills
         ? `<div class="section">
             <div class="section-title">Skills</div>
             <div class="divider"></div>
-            <span class="skill">${skill.name}</span>
+            ${skillItems}
           </div>`
         : ""
     }
