@@ -25,6 +25,23 @@ export default function RootLayout() {
         <Stack.Screen name="skill/index" options={{ headerShown: false }} />
         <Stack.Screen name="skill/[id]" options={{ headerShown: false }} />
         
+        <Stack.Screen name="additional/index" options={{ headerShown: false }} />
+
+        <Stack.Screen name="language/index" options={{ headerShown: false }} />
+        <Stack.Screen name="language/[id]" options={{ headerShown: false }} />
+
+        <Stack.Screen name="hobby/index" options={{ headerShown: false }} />
+        <Stack.Screen name="hobby/[id]" options={{ headerShown: false }} />
+
+        <Stack.Screen name="certificate/index" options={{ headerShown: false }} />
+        <Stack.Screen name="certificate/[id]" options={{ headerShown: false }} />
+
+        <Stack.Screen name="award/index" options={{ headerShown: false }} />
+        <Stack.Screen name="award/[id]" options={{ headerShown: false }} />
+
+        <Stack.Screen name="custom/index" options={{ headerShown: false }} />
+        <Stack.Screen name="custom/[id]" options={{ headerShown: false }} />
+
         <Stack.Screen name="about" options={{ headerShown: false }} />
         <Stack.Screen name="preview" options={{ headerShown: false }} />
       </Stack>

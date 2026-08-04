@@ -10,7 +10,7 @@ const A4_HEIGHT = 1123;
 const scale = (screenWidth - 40) / A4_WIDTH;
 
 export default function ResumePreview() {
-  const { contact, about, experiences, educations, skills } = useResumeStore();
+  const { contact, about, experiences, educations, skills, languages, hobbies, certificates, awards, customSections } = useResumeStore();
 
   const fullName = `${contact?.firstName ?? ""} ${contact?.lastName ?? ""}`.trim();
 
@@ -24,6 +24,11 @@ export default function ResumePreview() {
   const hasExperiences = experiences.length > 0;
   const hasEducations = educations.length > 0;
   const hasSkills = skills.length > 0;
+  const hasLanguages = languages.length > 0;
+  const hasHobbies = hobbies.length > 0;
+  const hasCertificates = certificates.length > 0;
+  const hasAwards = awards.length > 0;
+  const hasCustomSections = customSections.length > 0;
 
   // Use the most recent job title for the header (optional)
   const latestJobTitle = experiences[0]?.jobTitle;
@@ -33,13 +38,14 @@ export default function ResumePreview() {
       style={{
         alignItems: "center",
         height: A4_HEIGHT * scale,
+        backgroundColor: "#FFFFFF",
       }}
     >
       <View
         style={{
           width: A4_WIDTH,
           height: A4_HEIGHT,
-          backgroundColor: "white",
+          backgroundColor: "#FFFFFF",
           transform: [{ scale }],
           transformOrigin: "top",
           elevation: 3,
@@ -84,7 +90,7 @@ export default function ResumePreview() {
         </View>
 
         {/* Main Content */}
-        <View className="px-8 py-8">
+        <View className="px-8 py-8" style={{ backgroundColor: "#FFFFFF" }}>
           {/* About */}
           {about?.summary ? (
             <ResumeSection title="About Me">
@@ -196,6 +202,144 @@ export default function ResumePreview() {
                 )}
               </View>
             </ResumeSection>
+          ) : null}
+
+          {/* Languages */}
+          {hasLanguages ? (
+            <ResumeSection title="Languages">
+              <View className="gap-3">
+                {languages.map((lang) =>
+                  lang.name ? (
+                    <View key={lang.id} className="flex-row gap-5">
+                      <Text className="text-sm font-medium text-gray-900">
+                        {lang.name}
+                      </Text>
+                      {lang.proficiency ? (
+                        <Text className="text-sm text-gray-500">{lang.proficiency}</Text>
+                      ) : null}
+                    </View>
+                  ) : null
+                )}
+              </View>
+            </ResumeSection>
+          ) : null}
+
+          {/* Hobbies */}
+          {hasHobbies ? (
+            <ResumeSection title="Hobbies">
+              <View className="flex-row flex-wrap gap-2">
+                {hobbies.map((hobby) =>
+                  hobby.name ? (
+                    <View
+                      key={hobby.id}
+                      className="rounded-md bg-gray-100 px-3 py-2"
+                    >
+                      <Text className="text-sm text-gray-700">{hobby.name}</Text>
+                    </View>
+                  ) : null
+                )}
+              </View>
+            </ResumeSection>
+          ) : null}
+
+          {/* Certificates */}
+          {hasCertificates ? (
+            <ResumeSection title="Certificates">
+              <View className="gap-6">
+                {certificates.map((cert) => (
+                  <View key={cert.id}>
+                    {cert.name ? (
+                      <Text className="text-base font-semibold text-gray-900">
+                        {cert.name}
+                      </Text>
+                    ) : null}
+
+                    {cert.issuer ? (
+                      <Text className="mt-1 text-sm font-medium text-gray-600">
+                        {cert.issuer}
+                      </Text>
+                    ) : null}
+
+                    {cert.date ? (
+                      <Text className="mt-1 text-xs text-gray-500">
+                        {formatDate(cert.date)}
+                      </Text>
+                    ) : null}
+
+                    {cert.description ? (
+                      <Text className="mt-3 text-sm leading-6 text-gray-700">
+                        {cert.description}
+                      </Text>
+                    ) : null}
+                  </View>
+                ))}
+              </View>
+            </ResumeSection>
+          ) : null}
+
+          {/* Awards */}
+          {hasAwards ? (
+            <ResumeSection title="Awards">
+              <View className="gap-6">
+                {awards.map((award) => (
+                  <View key={award.id}>
+                    {award.title ? (
+                      <Text className="text-base font-semibold text-gray-900">
+                        {award.title}
+                      </Text>
+                    ) : null}
+
+                    {award.issuer ? (
+                      <Text className="mt-1 text-sm font-medium text-gray-600">
+                        {award.issuer}
+                      </Text>
+                    ) : null}
+
+                    {award.date ? (
+                      <Text className="mt-1 text-xs text-gray-500">
+                        {formatDate(award.date)}
+                      </Text>
+                    ) : null}
+
+                    {award.description ? (
+                      <Text className="mt-3 text-sm leading-6 text-gray-700">
+                        {award.description}
+                      </Text>
+                    ) : null}
+                  </View>
+                ))}
+              </View>
+            </ResumeSection>
+          ) : null}
+
+          {/* Custom Sections */}
+          {hasCustomSections ? customSections.map((section) =>
+                section.title || section.subtitle || section.description ? (
+                  <ResumeSection
+                    key={section.id}
+                    title={section.title || "Additional"}
+                  >
+                    <View>
+                      {section.subtitle ? (
+                        <Text className="text-base font-semibold text-gray-900">
+                          {section.subtitle}
+                        </Text>
+                      ) : null}
+
+                      {section.date ? (
+                        <Text className="mt-1 text-xs text-gray-500">
+                          {formatDate(section.date)}
+                        </Text>
+                      ) : null}
+
+                      {section.description ? (
+                        <Text className="mt-3 text-sm leading-6 text-gray-700">
+                          {section.description}
+                        </Text>
+                      ) : null}
+                    </View>
+                  </ResumeSection>
+                ) : null
           ) : null}
         </View>
       </View>

@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/resumelab_logo.png",
     "scheme": "resumebuilder",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": false
@@ -16,6 +16,7 @@
         "backgroundColor": "#000000",
         "foregroundImage": "./assets/images/resumelab_logo.png"
       },
+      "userInterfaceStyle": "light",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.codewilson64.resumelab"

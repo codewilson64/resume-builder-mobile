@@ -3,9 +3,14 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import {
   About,
+  Award,
+  Certificate,
   ContactDetails,
+  CustomSection,
   Education,
   Experience,
+  Hobby,
+  Language,
   Skill,
 } from "../types/resume";
 
@@ -15,6 +20,11 @@ type ResumeStore = {
   experiences: Experience[];
   educations: Education[];
   skills: Skill[];
+  languages: Language[];
+  hobbies: Hobby[];
+  certificates: Certificate[];
+  awards: Award[];
+  customSections: CustomSection[];
 
   // Contact
   updateContact: (field: keyof ContactDetails, value: string) => void;
@@ -26,21 +36,13 @@ type ResumeStore = {
 
   // Experiences
   addExperience: (experience: Experience) => void;
-  updateExperience: (
-    id: string,
-    field: keyof Experience,
-    value: string | boolean | null
-  ) => void;
+  updateExperience: (id: string, field: keyof Experience, value: string | boolean | null) => void;
   removeExperience: (id: string) => void;
   resetExperiences: () => void;
 
   // Educations
   addEducation: (education: Education) => void;
-  updateEducation: (
-    id: string,
-    field: keyof Education,
-    value: string | null
-  ) => void;
+  updateEducation: (id: string, field: keyof Education, value: string | null) => void;
   removeEducation: (id: string) => void;
   resetEducations: () => void;
 
@@ -49,6 +51,36 @@ type ResumeStore = {
   updateSkill: (id: string, field: keyof Skill, value: string) => void;
   removeSkill: (id: string) => void;
   resetSkills: () => void;
+
+  // Language
+  addLanguage: (language: Language) => void;
+  updateLanguage: (id: string, field: keyof Language, value: string) => void;
+  removeLanguage: (id: string) => void;
+  resetLanguages: () => void;
+  
+  // Hobby
+  addHobby: (hobby: Hobby) => void;
+  updateHobby: (id: string, field: keyof Hobby, value: string) => void;
+  removeHobby: (id: string) => void;
+  resetHobbies: () => void;
+
+  // Certificate
+  addCertificate: (certificate: Certificate) => void;
+  updateCertificate: (id: string, field: keyof Certificate, value: string | null) => void;
+  removeCertificate: (id: string) => void;
+  resetCertificates: () => void;
+
+  // Award
+  addAward: (award: Award) => void;
+  updateAward: (id: string, field: keyof Award, value: string | null) => void;
+  removeAward: (id: string) => void;
+  resetAwards: () => void;
+
+  // Custom Section
+  addCustomSection: (section: CustomSection) => void;
+  updateCustomSection: (id: string, field: keyof CustomSection, value: string) => void;
+  removeCustomSection: (id: string) => void;
+  resetCustomSections: () => void;
 
   // Optional: reset everything
   resetAll: () => void;
@@ -76,6 +108,11 @@ export const useResumeStore = create<ResumeStore>()(
       experiences: [],
       educations: [],
       skills: [],
+      languages: [],
+      hobbies: [],
+      certificates: [],
+      awards: [],
+      customSections: [],
 
       // ---------- Contact ----------
       updateContact: (field, value) =>
@@ -159,6 +196,106 @@ export const useResumeStore = create<ResumeStore>()(
 
       resetSkills: () => set({ skills: [] }),
 
+      // ---------- Languages ----------
+      addLanguage: (language) =>
+        set((state) => ({
+          languages: [...state.languages, language],
+        })),
+
+      updateLanguage: (id, field, value) =>
+        set((state) => ({
+          languages: state.languages.map((item) =>
+            item.id === id ? { ...item, [field]: value } : item
+          ),
+        })),
+
+      removeLanguage: (id) =>
+        set((state) => ({
+          languages: state.languages.filter((item) => item.id !== id),
+        })),
+
+      resetLanguages: () => set({ languages: [] }),
+
+      // ---------- Hobbies ----------
+      addHobby: (hobby) =>
+        set((state) => ({
+          hobbies: [...state.hobbies, hobby],
+        })),
+
+      updateHobby: (id, field, value) =>
+        set((state) => ({
+          hobbies: state.hobbies.map((item) =>
+            item.id === id ? { ...item, [field]: value } : item
+          ),
+        })),
+
+      removeHobby: (id) =>
+        set((state) => ({
+          hobbies: state.hobbies.filter((item) => item.id !== id),
+        })),
+
+      resetHobbies: () => set({ hobbies: [] }),
+
+      // ---------- Certificates ----------
+      addCertificate: (certificate) =>
+        set((state) => ({
+          certificates: [...state.certificates, certificate],
+        })),
+
+      updateCertificate: (id, field, value) =>
+        set((state) => ({
+          certificates: state.certificates.map((item) =>
+            item.id === id ? { ...item, [field]: value } : item
+          ),
+        })),
+
+      removeCertificate: (id) =>
+        set((state) => ({
+          certificates: state.certificates.filter((item) => item.id !== id),
+        })),
+
+      resetCertificates: () => set({ certificates: [] }),
+
+      // ---------- Awards ----------
+      addAward: (award) =>
+        set((state) => ({
+          awards: [...state.awards, award],
+        })),
+
+      updateAward: (id, field, value) =>
+        set((state) => ({
+          awards: state.awards.map((item) =>
+            item.id === id ? { ...item, [field]: value } : item
+          ),
+        })),
+
+      removeAward: (id) =>
+        set((state) => ({
+          awards: state.awards.filter((item) => item.id !== id),
+        })),
+
+      resetAwards: () => set({ awards: [] }),
+
+      // ---------- Custom sections ----------
+      addCustomSection: (section) =>
+        set((state) => ({
+          customSections: [...state.customSections, section],
+        })),
+
+      updateCustomSection: (id, field, value) =>
+        set((state) => ({
+          customSections: state.customSections.map((item) =>
+            item.id === id ? { ...item, [field]: value } : item
+          ),
+        })),
+
+      removeCustomSection: (id) =>
+        set((state) => ({
+          customSections: state.customSections.filter((item) => item.id !== id),
+        })),
+
+      resetCustomSections: () => set({ customSections: [] }),
+
       // ---------- Reset all ----------
       resetAll: () =>
         set({
@@ -167,6 +304,11 @@ export const useResumeStore = create<ResumeStore>()(
           experiences: [],
           educations: [],
           skills: [],
+          languages: [],
+          hobbies: [],
+          certificates: [],
+          awards: [],
+          customSections: [],
         }),
     }),
     {

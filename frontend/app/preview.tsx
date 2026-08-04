@@ -18,27 +18,33 @@ import { downloadResumePDF } from "./utils/generateResumePDF";
 export default function PreviewPage() {
   const router = useRouter();
   const [isGenerating, setIsGenerating] = useState(false);
-  const { contact, about, experiences, educations, skills } = useResumeStore();
+  const { contact, about, experiences, educations, skills, languages, hobbies, certificates, awards, customSections } = useResumeStore();
 
   const handleDownload = async () => {
     try {
       setIsGenerating(true);
-      await downloadResumePDF({ contact, about, experiences, educations, skills });
+      await downloadResumePDF({ contact, about, experiences, educations, skills, languages, hobbies, certificates, awards, customSections });
     } finally {
       setIsGenerating(false);
     }
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView 
+      className="flex-1 bg-white"
+      style={{ backgroundColor: "#FFFFFF" }}
+    >
       <KeyboardAvoidingView
         className="flex-1"
+        style={{ backgroundColor: "#FFFFFF" }}
         behavior="padding"
         keyboardVerticalOffset={0}
       >
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerClassName="px-5 pt-8 pb-32"
+          style={{ backgroundColor: "#FFFFFF" }}
+          contentContainerStyle={{ backgroundColor: "#FFFFFF" }}
         >
           {/* Header */}
           <View className="flex-row items-center gap-2">

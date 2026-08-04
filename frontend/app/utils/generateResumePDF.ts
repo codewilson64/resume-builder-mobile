@@ -2,7 +2,7 @@ import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { Alert } from "react-native";
 import { formatDate } from "@/app/utils/formatDate";
-import { About, ContactDetails, Education, Experience, Skill } from "../types/resume";
+import { About, Award, Certificate, ContactDetails, CustomSection, Education, Experience, Hobby, Language, Skill } from "../types/resume";
 
 export type ResumeData = {
   contact: ContactDetails;
@@ -10,6 +10,11 @@ export type ResumeData = {
   experiences: Experience[];
   educations: Education[];
   skills: Skill[];
+  languages: Language[];
+  hobbies: Hobby[];
+  certificates: Certificate[];
+  awards: Award[];
+  customSections: CustomSection[];
 };
 
 export function generateResumeHTML({
@@ -18,6 +23,11 @@ export function generateResumeHTML({
   experiences,
   educations,
   skills,
+  languages,
+  hobbies,
+  certificates,
+  awards,
+  customSections,
 }: ResumeData): string {
   const fullName = `${contact?.firstName ?? ""} ${contact?.lastName ?? ""}`.trim();
 
@@ -31,6 +41,10 @@ export function generateResumeHTML({
   const hasExperiences = experiences.length > 0;
   const hasEducations = educations.length > 0;
   const hasSkills = skills.length > 0;
+  const hasLanguages = languages.length > 0;
+  const hasHobbies = hobbies.length > 0;
+  const hasCertificates = certificates.length > 0;
+  const hasAwards = awards.length > 0;
 
   const latestJobTitle = experiences[0]?.jobTitle;
 
@@ -81,6 +95,92 @@ export function generateResumeHTML({
     .filter((s) => s.name)
     .map((s) => `<span class="skill">${s.name}</span>`)
     .join("");
+
+  const languageItems = languages
+    .filter((l) => l.name)
+    .map(
+      (l) => `
+        <div class="language-row">
+          <span class="language-name">${l.name}</span>
+          ${l.proficiency ? `<span class="language-level">${l.proficiency}</span>` : ""}
+        </div>
+      `
+    )
+    .join("");
+  
+  const hobbyItems = hobbies
+    .filter((h) => h.name)
+    .map((h) => `<span class="hobby">${h.name}</span>`)
+    .join("");
+
+  const certificateItems = certificates
+    .map((cert) => {
+      return `
+        <div style="margin-bottom: 20px;">
+          ${cert.name ? `<div class="item-title">${cert.name}</div>` : ""}
+          ${cert.issuer ? `<div class="item-subtitle">${cert.issuer}</div>` : ""}
+          ${
+            cert.date
+              ? `<div class="meta">${formatDate(cert.date)}</div>`
+              : ""
+          }
+          ${
+            cert.description
+              ? `<div class="body-text">${cert.description}</div>`
+              : ""
+          }
+        </div>
+      `;
+    })
+    .join("");
+
+    const awardItems = awards
+      .map((award) => {
+        return `
+          <div style="margin-bottom: 20px;">
+            ${award.title ? `<div class="item-title">${award.title}</div>` : ""}
+            ${award.issuer ? `<div class="item-subtitle">${award.issuer}</div>` : ""}
+            ${
+              award.date
+                ? `<div class="meta">${formatDate(award.date)}</div>`
+                : ""
+            }
+            ${
+              award.description
+                ? `<div class="body-text">${award.description}</div>`
+                : ""
+            }
+          </div>
+        `;
+      })
+      .join("");
+
+    const customSectionItems = customSections
+      .filter((s) => s.title || s.subtitle || s.description)
+      .map((section) => {
+        return `
+          <div class="section">
+            <div class="section-title">${section.title || "Additional"}</div>
+            <div class="divider"></div>
+            ${
+              section.subtitle
+                ? `<div class="item-title">${section.subtitle}</div>`
+                : ""
+            }
+            ${
+              section.date
+                ? `<div class="meta">${formatDate(section.date)}</div>`
+                : ""
+            }
+            ${
+              section.description
+                ? `<div class="body-text">${section.description}</div>`
+                : ""
+            }
+          </div>
+        `;
+      })
+      .join("");
 
   return `
 <!DOCTYPE html>
@@ -165,6 +265,31 @@ export function generateResumeHTML({
       margin-right: 8px;
       margin-bottom: 8px;
     }
+    .language-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .language-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: #111827;
+    }
+    .language-level {
+      font-size: 13px;
+      color: #6b7280;
+    }
+    .hobby {
+      display: inline-block;
+      background: #f3f4f6;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 13px;
+      color: #374151;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
   </style>
 </head>
 <body>
@@ -226,6 +351,48 @@ export function generateResumeHTML({
           </div>`
         : ""
     }
+
+    ${
+      hasLanguages
+        ? `<div class="section">
+            <div class="section-title">Languages</div>
+            <div class="divider"></div>
+            ${languageItems}
+          </div>`
+        : ""
+    }
+
+    ${
+      hasHobbies
+        ? `<div class="section">
+            <div class="section-title">Hobbies</div>
+            <div class="divider"></div>
+            ${hobbyItems}
+          </div>`
+        : ""
+    }
+
+    ${
+      hasCertificates
+        ? `<div class="section">
+            <div class="section-title">Certificates</div>
+            <div class="divider"></div>
+            ${certificateItems}
+          </div>`
+        : ""
+    }
+
+    ${
+      hasAwards
+        ? `<div class="section">
+            <div class="section-title">Awards</div>
+            <div class="divider"></div>
+            ${awardItems}
+          </div>`
+        : ""
+    }
+
+    ${customSectionItems}
   </div>
 </body>
 </html>

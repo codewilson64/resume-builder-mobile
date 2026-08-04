@@ -10,7 +10,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import AboutMeForm from "./components/resume/AboutMeForm";
 
-
 export default function AboutPage() {
   const router = useRouter();
 
@@ -59,11 +58,11 @@ export default function AboutPage() {
         {/* Fixed Bottom Button */}
         <View className="absolute bottom-0 left-0 right-0 bg-white px-5 py-4">
           <Pressable
-            onPress={() => router.push("/preview")}
+            onPress={() => router.push("/additional")}
             className="h-14 flex-row items-center justify-center rounded-lg bg-cyan-400"
           >
             <Text className="text-base font-medium text-white">
-              Continue to Preview
+              Save & Continue
             </Text>
 
             <MaterialIcons
