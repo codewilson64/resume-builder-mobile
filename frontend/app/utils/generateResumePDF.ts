@@ -2,20 +2,7 @@ import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { Alert } from "react-native";
 import { formatDate } from "@/app/utils/formatDate";
-import { About, Award, Certificate, ContactDetails, CustomSection, Education, Experience, Hobby, Language, Skill } from "../types/resume";
-
-export type ResumeData = {
-  contact: ContactDetails;
-  about: About;
-  experiences: Experience[];
-  educations: Education[];
-  skills: Skill[];
-  languages: Language[];
-  hobbies: Hobby[];
-  certificates: Certificate[];
-  awards: Award[];
-  customSections: CustomSection[];
-};
+import { ResumeData } from "../types/resume";
 
 export function generateResumeHTML({
   contact,
@@ -62,7 +49,7 @@ export function generateResumeHTML({
           : "";
 
       return `
-        <div style="margin-bottom: 20px;">
+        <div class="item">
           ${exp.jobTitle ? `<div class="item-title">${exp.jobTitle}</div>` : ""}
           ${exp.companyName ? `<div class="item-subtitle">${exp.companyName}</div>` : ""}
           ${dateRange ? `<div class="meta">${dateRange}</div>` : ""}
@@ -76,7 +63,7 @@ export function generateResumeHTML({
   const educationItems = educations
     .map((edu) => {
       return `
-        <div style="margin-bottom: 20px;">
+        <div class="item">
           ${edu.degree ? `<div class="item-title">${edu.degree}</div>` : ""}
           ${edu.school ? `<div class="item-subtitle">${edu.school}</div>` : ""}
           ${
@@ -116,7 +103,7 @@ export function generateResumeHTML({
   const certificateItems = certificates
     .map((cert) => {
       return `
-        <div style="margin-bottom: 20px;">
+        <div class="item">
           ${cert.name ? `<div class="item-title">${cert.name}</div>` : ""}
           ${cert.issuer ? `<div class="item-subtitle">${cert.issuer}</div>` : ""}
           ${
@@ -137,7 +124,7 @@ export function generateResumeHTML({
     const awardItems = awards
       .map((award) => {
         return `
-          <div style="margin-bottom: 20px;">
+          <div class="item">
             ${award.title ? `<div class="item-title">${award.title}</div>` : ""}
             ${award.issuer ? `<div class="item-subtitle">${award.issuer}</div>` : ""}
             ${
@@ -189,6 +176,13 @@ export function generateResumeHTML({
   <meta charset="utf-8" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    @page {
+      margin: 32px 0; /* top/bottom space on every page (including page 2+) */
+    }
+    @page :first {
+      margin-top: 0;   /* remove top space on the first page */
+    }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
       color: #111827;
@@ -219,6 +213,8 @@ export function generateResumeHTML({
     }
     .section {
       margin-bottom: 28px;
+      page-break-inside: avoid;   /* keep whole section together */
+      break-inside: avoid;
     }
     .section-title {
       font-size: 12px;
@@ -227,11 +223,20 @@ export function generateResumeHTML({
       letter-spacing: 1.5px;
       color: #111827;
       margin-bottom: 8px;
+      page-break-after: avoid;    /* title stays with its content */
+      break-after: avoid;
     }
     .divider {
       height: 1px;
       background: #e5e7eb;
       margin-bottom: 14px;
+      page-break-after: avoid;    /* title stays with its content */
+      break-after: avoid;
+    }
+    .item {
+      margin-bottom: 20px;
+      page-break-inside: avoid;
+      break-inside: avoid;
     }
     .item-title {
       font-size: 14px;
