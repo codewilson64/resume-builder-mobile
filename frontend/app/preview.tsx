@@ -18,7 +18,19 @@ import { downloadResumePDF } from "./utils/generateResumePDF";
 export default function PreviewPage() {
   const router = useRouter();
   const [isGenerating, setIsGenerating] = useState(false);
-  const { contact, about, experiences, educations, skills, languages, hobbies, certificates, awards, customSections } = useResumeStore();
+  
+  const {
+    contact,
+    about,
+    experiences,
+    educations,
+    skills,
+    languages,
+    hobbies,
+    certificates,
+    awards,
+    customSections,
+  } = useResumeStore();
 
   const handleDownload = async () => {
     try {

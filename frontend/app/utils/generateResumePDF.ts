@@ -33,14 +33,35 @@ export function generateResumeHTML({
   const hasCertificates = certificates.length > 0;
   const hasAwards = awards.length > 0;
 
-  const latestJobTitle = experiences[0]?.jobTitle;
-
-  const addressLine = [contact?.address, contact?.city, contact?.postalCode]
+  const contactLine = [
+    contact?.phone,
+    contact?.email,
+    [contact?.city, contact?.address, contact?.postalCode]
+      .filter(Boolean)
+      .join(", ") || contact?.city,
+  ]
     .filter(Boolean)
+    .join(" | ");
+
+  const skillsText = skills
+    .filter((s) => s.name)
+    .map((s) => s.name)
+    .join(", ");
+
+  const languagesText = languages
+    .filter((l) => l.name)
+    .map((l) => (l.proficiency ? `${l.name} (${l.proficiency})` : l.name))
+    .join(", ");
+
+  const hobbiesText = hobbies
+    .filter((h) => h.name)
+    .map((h) => h.name)
     .join(", ");
 
   const experienceItems = experiences
     .map((exp) => {
+      const companyLine = [exp.companyName, exp.city].filter(Boolean).join(" | ");
+
       const dateRange =
         exp.startDate || exp.endDate || exp.currentlyWorkHere
           ? `${formatDate(exp.startDate)}${exp.startDate ? " - " : ""}${
@@ -48,13 +69,17 @@ export function generateResumeHTML({
             }`
           : "";
 
+      const titleLine = [exp.jobTitle, dateRange].filter(Boolean).join(" | ");
+
       return `
         <div class="item">
-          ${exp.jobTitle ? `<div class="item-title">${exp.jobTitle}</div>` : ""}
-          ${exp.companyName ? `<div class="item-subtitle">${exp.companyName}</div>` : ""}
-          ${dateRange ? `<div class="meta">${dateRange}</div>` : ""}
-          ${exp.city ? `<div class="meta">${exp.city}</div>` : ""}
-          ${exp.jobDescription ? `<div class="body-text">${exp.jobDescription}</div>` : ""}
+          ${companyLine ? `<div class="item-title">${companyLine}</div>` : ""}
+          ${titleLine ? `<div class="item-subtitle">${titleLine}</div>` : ""}
+          ${
+            exp.jobDescription
+              ? `<div class="body-text">${exp.jobDescription}</div>`
+              : ""
+          }
         </div>
       `;
     })
@@ -62,55 +87,39 @@ export function generateResumeHTML({
 
   const educationItems = educations
     .map((edu) => {
+      const schoolLine = [edu.school, edu.city].filter(Boolean).join(" | ");
+
+      const degreeLine = [
+        edu.degree,
+        edu.graduationDate ? formatDate(edu.graduationDate) : null,
+      ]
+        .filter(Boolean)
+        .join(" | ");
+
       return `
         <div class="item">
-          ${edu.degree ? `<div class="item-title">${edu.degree}</div>` : ""}
-          ${edu.school ? `<div class="item-subtitle">${edu.school}</div>` : ""}
+          ${schoolLine ? `<div class="item-title">${schoolLine}</div>` : ""}
+          ${degreeLine ? `<div class="item-subtitle">${degreeLine}</div>` : ""}
           ${
-            edu.graduationDate
-              ? `<div class="meta">Graduated ${formatDate(edu.graduationDate)}</div>`
+            edu.description
+              ? `<div class="body-text">${edu.description}</div>`
               : ""
           }
-          ${edu.city ? `<div class="meta">${edu.city}</div>` : ""}
-          ${edu.description ? `<div class="body-text">${edu.description}</div>` : ""}
         </div>
       `;
     })
     .join("");
 
-  const skillItems = skills
-    .filter((s) => s.name)
-    .map((s) => `<span class="skill">${s.name}</span>`)
-    .join("");
-
-  const languageItems = languages
-    .filter((l) => l.name)
-    .map(
-      (l) => `
-        <div class="language-row">
-          <span class="language-name">${l.name}</span>
-          ${l.proficiency ? `<span class="language-level">${l.proficiency}</span>` : ""}
-        </div>
-      `
-    )
-    .join("");
-  
-  const hobbyItems = hobbies
-    .filter((h) => h.name)
-    .map((h) => `<span class="hobby">${h.name}</span>`)
-    .join("");
-
   const certificateItems = certificates
     .map((cert) => {
+      const metaLine = [cert.issuer, cert.date ? formatDate(cert.date) : null]
+        .filter(Boolean)
+        .join(" | ");
+
       return `
         <div class="item">
           ${cert.name ? `<div class="item-title">${cert.name}</div>` : ""}
-          ${cert.issuer ? `<div class="item-subtitle">${cert.issuer}</div>` : ""}
-          ${
-            cert.date
-              ? `<div class="meta">${formatDate(cert.date)}</div>`
-              : ""
-          }
+          ${metaLine ? `<div class="item-subtitle">${metaLine}</div>` : ""}
           ${
             cert.description
               ? `<div class="body-text">${cert.description}</div>`
@@ -121,53 +130,52 @@ export function generateResumeHTML({
     })
     .join("");
 
-    const awardItems = awards
-      .map((award) => {
-        return `
-          <div class="item">
-            ${award.title ? `<div class="item-title">${award.title}</div>` : ""}
-            ${award.issuer ? `<div class="item-subtitle">${award.issuer}</div>` : ""}
-            ${
-              award.date
-                ? `<div class="meta">${formatDate(award.date)}</div>`
-                : ""
-            }
-            ${
-              award.description
-                ? `<div class="body-text">${award.description}</div>`
-                : ""
-            }
-          </div>
-        `;
-      })
-      .join("");
+  const awardItems = awards
+    .map((award) => {
+      const metaLine = [award.issuer, award.date ? formatDate(award.date) : null]
+        .filter(Boolean)
+        .join(" | ");
 
-    const customSectionItems = customSections
-      .filter((s) => s.title || s.subtitle || s.description)
-      .map((section) => {
-        return `
-          <div class="section">
-            <div class="section-title">${section.title || "Additional"}</div>
-            <div class="divider"></div>
-            ${
-              section.subtitle
-                ? `<div class="item-title">${section.subtitle}</div>`
-                : ""
-            }
-            ${
-              section.date
-                ? `<div class="meta">${formatDate(section.date)}</div>`
-                : ""
-            }
-            ${
-              section.description
-                ? `<div class="body-text">${section.description}</div>`
-                : ""
-            }
-          </div>
-        `;
-      })
-      .join("");
+      return `
+        <div class="item">
+          ${award.title ? `<div class="item-title">${award.title}</div>` : ""}
+          ${metaLine ? `<div class="item-subtitle">${metaLine}</div>` : ""}
+          ${
+            award.description
+              ? `<div class="body-text">${award.description}</div>`
+              : ""
+          }
+        </div>
+      `;
+    })
+    .join("");
+
+  const customSectionItems = customSections
+    .filter((s) => s.title || s.subtitle || s.description)
+    .map((section) => {
+      return `
+        <div class="section">
+          <div class="section-title">${section.title || "Additional"}</div>
+          <div class="divider"></div>
+          ${
+            section.subtitle
+              ? `<div class="item-title">${section.subtitle}</div>`
+              : ""
+          }
+          ${
+            section.date
+              ? `<div class="item-subtitle">${formatDate(section.date)}</div>`
+              : ""
+          }
+          ${
+            section.description
+              ? `<div class="body-text">${section.description}</div>`
+              : ""
+          }
+        </div>
+      `;
+    })
+    .join("");
 
   return `
 <!DOCTYPE html>
@@ -178,122 +186,90 @@ export function generateResumeHTML({
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     @page {
-      margin: 32px 0; /* top/bottom space on every page (including page 2+) */
+      margin-top: 24px;
+      margin-bottom: 24px;
+      margin-left: 0;
+      margin-right: 0;
     }
     @page :first {
-      margin-top: 0;   /* remove top space on the first page */
+      margin-top: 0;
     }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-      color: #111827;
-      line-height: 1.5;
+      color: #000000;
+      line-height: 1.4;
+      font-size: 12px;
     }
+
     .header {
-      background: #111827;
-      color: white;
-      padding: 32px 40px;
+      padding: 28px 36px 12px 36px;
     }
     .name {
-      font-size: 28px;
+      font-size: 22px;
       font-weight: 700;
-      margin-bottom: 6px;
-    }
-    .job-title-header {
-      font-size: 14px;
-      color: #d1d5db;
-      margin-bottom: 16px;
+      color: #000000;
+      margin-bottom: 3px;
     }
     .contact {
       font-size: 12px;
-      color: #d1d5db;
+      color: #000000;
     }
-    .contact span { margin-right: 16px; }
+    .header-line {
+      height: 1px;
+      background: #9ca3af;
+      margin-top: 10px;
+    }
+
     .content {
-      padding: 32px 40px;
+      padding: 0 36px 24px 36px;
     }
+
     .section {
-      margin-bottom: 28px;
-      page-break-inside: avoid;   /* keep whole section together */
+      margin-bottom: 16px;
+      page-break-inside: avoid;
       break-inside: avoid;
     }
     .section-title {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: #111827;
-      margin-bottom: 8px;
-      page-break-after: avoid;    /* title stays with its content */
+      color: #000000;
+      margin-bottom: 3px;
+      page-break-after: avoid;
       break-after: avoid;
     }
     .divider {
       height: 1px;
-      background: #e5e7eb;
-      margin-bottom: 14px;
-      page-break-after: avoid;    /* title stays with its content */
+      background: #9ca3af;
+      margin-bottom: 6px;
+      page-break-after: avoid;
       break-after: avoid;
     }
+
     .item {
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       page-break-inside: avoid;
       break-inside: avoid;
     }
     .item-title {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 600;
-      color: #111827;
+      color: #000000;
     }
     .item-subtitle {
-      font-size: 13px;
-      font-weight: 500;
-      color: #4b5563;
-      margin-top: 2px;
-    }
-    .meta {
-      font-size: 11px;
-      color: #6b7280;
-      margin-top: 2px;
+      font-size: 12px;
+      color: #000000;
+      margin-top: 1px;
     }
     .body-text {
-      font-size: 13px;
-      color: #374151;
-      margin-top: 10px;
-      line-height: 1.6;
+      font-size: 12px;
+      color: #000000;
+      margin-top: 3px;
+      line-height: 1.4;
     }
-    .skill {
-      display: inline-block;
-      background: #f3f4f6;
-      border-radius: 6px;
-      padding: 6px 12px;
-      font-size: 13px;
-      color: #374151;
-      margin-right: 8px;
-      margin-bottom: 8px;
-    }
-    .language-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    .language-name {
-      font-size: 13px;
-      font-weight: 500;
-      color: #111827;
-    }
-    .language-level {
-      font-size: 13px;
-      color: #6b7280;
-    }
-    .hobby {
-      display: inline-block;
-      background: #f3f4f6;
-      border-radius: 6px;
-      padding: 6px 12px;
-      font-size: 13px;
-      color: #374151;
-      margin-right: 8px;
-      margin-bottom: 8px;
+    .plain-text {
+      font-size: 12px;
+      color: #000000;
     }
   </style>
 </head>
@@ -301,19 +277,11 @@ export function generateResumeHTML({
   <div class="header">
     <div class="name">${fullName || "Your Name"}</div>
     ${
-      latestJobTitle
-        ? `<div class="job-title-header">${latestJobTitle}</div>`
+      hasContact && contactLine
+        ? `<div class="contact">${contactLine}</div>`
         : ""
     }
-    ${
-      hasContact
-        ? `<div class="contact">
-            ${contact?.email ? `<span>${contact.email}</span>` : ""}
-            ${contact?.phone ? `<span>${contact.phone}</span>` : ""}
-            ${addressLine ? `<div style="margin-top:6px">${addressLine}</div>` : ""}
-          </div>`
-        : ""
-    }
+    <div class="header-line"></div>
   </div>
 
   <div class="content">
@@ -323,6 +291,16 @@ export function generateResumeHTML({
             <div class="section-title">About Me</div>
             <div class="divider"></div>
             <div class="body-text">${about.summary}</div>
+          </div>`
+        : ""
+    }
+
+    ${
+      hasSkills && skillsText
+        ? `<div class="section">
+            <div class="section-title">Skills</div>
+            <div class="divider"></div>
+            <div class="plain-text">${skillsText}</div>
           </div>`
         : ""
     }
@@ -348,31 +326,11 @@ export function generateResumeHTML({
     }
 
     ${
-      hasSkills
-        ? `<div class="section">
-            <div class="section-title">Skills</div>
-            <div class="divider"></div>
-            ${skillItems}
-          </div>`
-        : ""
-    }
-
-    ${
-      hasLanguages
+      hasLanguages && languagesText
         ? `<div class="section">
             <div class="section-title">Languages</div>
             <div class="divider"></div>
-            ${languageItems}
-          </div>`
-        : ""
-    }
-
-    ${
-      hasHobbies
-        ? `<div class="section">
-            <div class="section-title">Hobbies</div>
-            <div class="divider"></div>
-            ${hobbyItems}
+            <div class="plain-text">${languagesText}</div>
           </div>`
         : ""
     }
@@ -393,6 +351,16 @@ export function generateResumeHTML({
             <div class="section-title">Awards</div>
             <div class="divider"></div>
             ${awardItems}
+          </div>`
+        : ""
+    }
+
+    ${
+      hasHobbies && hobbiesText
+        ? `<div class="section">
+            <div class="section-title">Hobbies</div>
+            <div class="divider"></div>
+            <div class="plain-text">${hobbiesText}</div>
           </div>`
         : ""
     }
