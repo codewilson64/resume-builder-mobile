@@ -4,7 +4,7 @@ import { Alert } from "react-native";
 import { formatDate } from "@/app/utils/formatDate";
 import { ResumeData } from "../types/resume";
 
-export function generateResumeHTML({
+export function generateOrionResumeHTML({
   contact,
   about,
   experiences,
@@ -372,9 +372,9 @@ export function generateResumeHTML({
   `;
 }
 
-export async function downloadResumePDF(data: ResumeData): Promise<void> {
+export async function downloadOrionResumePDF(data: ResumeData): Promise<void> {
   try {
-    const html = generateResumeHTML(data);
+    const html = generateOrionResumeHTML(data);
 
     const { uri } = await Print.printToFileAsync({
       html,
