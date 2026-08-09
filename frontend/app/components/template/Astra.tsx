@@ -79,7 +79,7 @@ export default function Astra() {
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.08,
-        shadowRadius: 6,
+        shadowRadius: 8,
         overflow: "hidden",
       }}
     >
@@ -98,7 +98,7 @@ export default function Astra() {
         }}
       >
         {/* Header */}
-        <View className="px-8 pt-8 pb-4">
+        <View className="px-8 pt-8 pb-8">
           <Text className="text-2xl text-center font-bold text-black">
             {fullName || "Your Name"}
           </Text>
@@ -111,7 +111,7 @@ export default function Astra() {
         {/* Main Content */}
         <View className="px-8 pb-8">
           {about?.summary ? (
-            <ResumeSection title="About Me">
+            <ResumeSection title="Summary">
               <Text className="text-sm leading-5 text-black">
                 {about.summary}
               </Text>

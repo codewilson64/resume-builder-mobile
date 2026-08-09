@@ -1,11 +1,21 @@
 import { Stack } from "expo-router";
+import { useEffect } from "react";
 import { StatusBar, useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { debugResumes, initDatabase } from "./utils/database";
 
 export default function RootLayout() {
   const scheme = useColorScheme();
   const isDark = scheme === "dark";
+
+  useEffect(() => {
+    initDatabase();
+  }, []);
+
+  useEffect(() => {
+    debugResumes();
+  }, []);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

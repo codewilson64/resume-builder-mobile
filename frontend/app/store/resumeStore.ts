@@ -12,9 +12,11 @@ import {
   Hobby,
   Language,
   Skill,
+  ResumeData,
 } from "../types/resume";
 
 type ResumeStore = {
+  currentResumeId: number | null; // Track which resume is currently loaded (null = new resume)
   contact: ContactDetails;
   about: About;
   experiences: Experience[];
@@ -82,6 +84,12 @@ type ResumeStore = {
   removeCustomSection: (id: string) => void;
   resetCustomSections: () => void;
 
+  // Load a full resume from SQLite into the store
+  loadResume: (data: ResumeData, id?: number | null) => void;
+
+  // Set current resume id
+  setCurrentResumeId: (id: number | null) => void;
+
   // Optional: reset everything
   resetAll: () => void;
 };
@@ -103,6 +111,7 @@ const initialAbout: About = {
 export const useResumeStore = create<ResumeStore>()(
   persist(
     (set) => ({
+      currentResumeId: null,
       contact: initialContact,
       about: initialAbout,
       experiences: [],
@@ -296,9 +305,28 @@ export const useResumeStore = create<ResumeStore>()(
 
       resetCustomSections: () => set({ customSections: [] }),
 
+      // ---------- Load Resume (from SQLite) ----------
+      loadResume: (data, id = null) =>
+        set({
+          currentResumeId: id ?? null,
+          contact: data.contact ?? initialContact,
+          about: data.about ?? initialAbout,
+          experiences: data.experiences ?? [],
+          educations: data.educations ?? [],
+          skills: data.skills ?? [],
+          languages: data.languages ?? [],
+          hobbies: data.hobbies ?? [],
+          certificates: data.certificates ?? [],
+          awards: data.awards ?? [],
+          customSections: data.customSections ?? [],
+        }),
+
+      setCurrentResumeId: (id) => set({ currentResumeId: id }),
+
       // ---------- Reset all ----------
       resetAll: () =>
         set({
+          currentResumeId: null,
           contact: initialContact,
           about: initialAbout,
           experiences: [],

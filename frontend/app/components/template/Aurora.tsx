@@ -12,7 +12,7 @@ const scale = (screenWidth - 110) / A4_WIDTH;
 const scaledWidth = A4_WIDTH * scale;
 const scaledHeight = A4_HEIGHT * scale;
 
-export default function Orion() {
+export default function Aurora() {
   const {
     contact,
     about,
@@ -35,15 +35,9 @@ export default function Orion() {
     contact?.city ||
     contact?.postalCode;
 
-  const contactLine = [
-    contact?.phone,
-    contact?.email,
-    [contact?.city, contact?.address, contact?.postalCode]
-      .filter(Boolean)
-      .join(", ") || contact?.city,
-  ]
+  const addressBlock = [contact?.city, contact?.address, contact?.postalCode]
     .filter(Boolean)
-    .join(" | ");
+    .join(", ");
 
   const hasExperiences = experiences.length > 0;
   const hasEducations = educations.length > 0;
@@ -98,14 +92,26 @@ export default function Orion() {
         }}
       >
         {/* Header */}
-        <View className="px-8 pt-8 pb-8">
-          <Text className="text-2xl font-bold text-black">
-            {fullName || "Your Name"}
-          </Text>
+        <View className="px-8 pt-8 pb-4">
+            <View className="flex-row items-start justify-between">
+                <Text className="text-2xl font-bold text-black flex-1 pr-4">
+                  {fullName || "Your Name"}
+                </Text>
 
-          {hasContact && contactLine ? (
-            <Text className="mt-1 text-sm text-black">{contactLine}</Text>
-          ) : null}
+                {hasContact ? (
+                  <View className="items-end">
+                    {contact?.phone ? (
+                    <Text className="text-sm text-black">{contact.phone}</Text>
+                    ) : null}
+                    {contact?.email ? (
+                    <Text className="text-sm text-black">{contact.email}</Text>
+                    ) : null}
+                    {addressBlock ? (
+                    <Text className="text-sm text-black text-right">{addressBlock}</Text>
+                    ) : null}
+                  </View>
+                ) : null}
+            </View>
         </View>
 
         {/* Main Content */}

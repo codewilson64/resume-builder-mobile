@@ -203,7 +203,7 @@ export function generateOrionResumeHTML({
     }
 
     .header {
-      padding: 28px 36px 12px 36px;
+      padding: 28px 36px 32px 36px;
     }
     .name {
       font-size: 22px;
@@ -214,11 +214,6 @@ export function generateOrionResumeHTML({
     .contact {
       font-size: 12px;
       color: #000000;
-    }
-    .header-line {
-      height: 1px;
-      background: #9ca3af;
-      margin-top: 10px;
     }
 
     .content {
@@ -281,14 +276,13 @@ export function generateOrionResumeHTML({
         ? `<div class="contact">${contactLine}</div>`
         : ""
     }
-    <div class="header-line"></div>
   </div>
 
   <div class="content">
     ${
       about?.summary
         ? `<div class="section">
-            <div class="section-title">About Me</div>
+            <div class="section-title">Summary</div>
             <div class="divider"></div>
             <div class="body-text">${about.summary}</div>
           </div>`

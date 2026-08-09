@@ -7,25 +7,30 @@ import {
   ActivityIndicator,
   Dimensions,
   FlatList,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { downloadOrionResumePDF } from "./utils/generateOrionResumePDF";
 import { useResumeStore } from "./store/resumeStore";
 
 import Astra from "./components/template/Astra";
 import Orion from "./components/template/Orion";
 import { downloadAstraResumePDF } from "./utils/generateAstraResumePDF";
+import { saveResume } from "./utils/database";
+import { useResumePager } from "./hooks/useResumePager";
+import Aurora from "./components/template/Aurora";
+import { downloadAuroraResumePDF } from "./utils/AuroraResumePDF";
+import Vega from "./components/template/Vega";
+import { downloadVegaResumePDF } from "./utils/VegaResumePDF";
+import Nova from "./components/template/Nova";
+import { downloadNovaResumePDF } from "./utils/NovaResumePDF";
 
 const { width: screenWidth } = Dimensions.get("window");
 
 // Resume pager
 const PEEK = 75;
-const PAGE_WIDTH = screenWidth - PEEK;
 
 // Names pager
 const NAME_ITEM_WIDTH = 80; // approximate width per name
@@ -35,7 +40,6 @@ const STYLES = [
   { id: "astra", label: "Astra" },
   { id: "aurora", label: "Aurora" },
   { id: "vega", label: "Vega" },
-  { id: "lyra", label: "Lyra" },
   { id: "nova", label: "Nova" },
 ];
 
@@ -44,9 +48,11 @@ const renderResume = (styleId: string) => {
     case "astra":
       return <Astra />;
     case "aurora":
+      return <Aurora />;
     case "vega":
-    case "lyra":
+      return <Vega />;
     case "nova":
+      return <Nova />;
     default:
       return <Orion />;
   }
@@ -55,10 +61,8 @@ const renderResume = (styleId: string) => {
 export default function PreviewPage() {
   const router = useRouter();
   const [isGenerating, setIsGenerating] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
 
-  const resumeListRef = useRef<FlatList>(null);
-  const namesListRef = useRef<FlatList>(null);
+  const { currentPage, resumeListRef, namesListRef, scrollToPage, onResumeScrollEnd, PAGE_WIDTH } = useResumePager();
 
   const {
     contact,
@@ -71,6 +75,8 @@ export default function PreviewPage() {
     certificates,
     awards,
     customSections,
+    currentResumeId,          
+    setCurrentResumeId,
   } = useResumeStore();
 
   const handleDownload = async () => {
@@ -93,33 +99,29 @@ export default function PreviewPage() {
 
       if (selectedStyle === "astra") {
         await downloadAstraResumePDF(data);
+      } else if (selectedStyle === "aurora") {
+        await downloadAuroraResumePDF(data);
+      } else if (selectedStyle === "vega") {
+        await downloadVegaResumePDF(data);
+      } else if (selectedStyle === "nova") {
+        await downloadNovaResumePDF(data);
       } else {
-        await downloadOrionResumePDF(data);
+        downloadOrionResumePDF(data);
       }
-    } finally {
+
+      const resumeId = saveResume(
+        data,
+        selectedStyle,
+        "My Resume",      
+        currentResumeId ?? undefined
+      );
+
+      if (!currentResumeId) {
+        setCurrentResumeId(resumeId);
+      }
+    } 
+    finally {
       setIsGenerating(false);
-    }
-  };
-
-  const scrollToPage = (index: number) => {
-    setCurrentPage(index);
-    resumeListRef.current?.scrollToIndex({ index, animated: true });
-    namesListRef.current?.scrollToIndex({
-      index,
-      animated: true,
-      viewPosition: 0.5, // keep selected name centered
-    });
-  };
-
-  const onResumeScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const page = Math.round(e.nativeEvent.contentOffset.x / PAGE_WIDTH);
-    if (page !== currentPage) {
-      setCurrentPage(page);
-      namesListRef.current?.scrollToIndex({
-        index: page,
-        animated: true,
-        viewPosition: 0.5,
-      });
     }
   };
 

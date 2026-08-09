@@ -4,7 +4,7 @@ import { Alert } from "react-native";
 import { formatDate } from "@/app/utils/formatDate";
 import { ResumeData } from "../types/resume";
 
-export function generateAstraResumeHTML({
+export function generateVegaResumeHTML({
   contact,
   about,
   experiences,
@@ -33,15 +33,9 @@ export function generateAstraResumeHTML({
   const hasCertificates = certificates.length > 0;
   const hasAwards = awards.length > 0;
 
-  const contactLine = [
-    contact?.phone,
-    contact?.email,
-    [contact?.city, contact?.address, contact?.postalCode]
-      .filter(Boolean)
-      .join(", ") || contact?.city,
-  ]
+  const addressBlock = [contact?.city, contact?.address, contact?.postalCode]
     .filter(Boolean)
-    .join(" | ");
+    .join(", ");
 
   const skillsText = skills
     .filter((s) => s.name)
@@ -61,14 +55,12 @@ export function generateAstraResumeHTML({
   const experienceItems = experiences
     .map((exp) => {
       const companyLine = [exp.companyName, exp.city].filter(Boolean).join(" | ");
-
       const dateRange =
         exp.startDate || exp.endDate || exp.currentlyWorkHere
           ? `${formatDate(exp.startDate)}${exp.startDate ? " - " : ""}${
               exp.currentlyWorkHere ? "Present" : formatDate(exp.endDate)
             }`
           : "";
-
       const titleLine = [exp.jobTitle, dateRange].filter(Boolean).join(" | ");
 
       return `
@@ -88,7 +80,6 @@ export function generateAstraResumeHTML({
   const educationItems = educations
     .map((edu) => {
       const schoolLine = [edu.school, edu.city].filter(Boolean).join(" | ");
-
       const degreeLine = [
         edu.degree,
         edu.graduationDate ? formatDate(edu.graduationDate) : null,
@@ -204,24 +195,20 @@ export function generateAstraResumeHTML({
 
     .header {
       padding: 28px 36px 32px 36px;
-      text-align: center;        
     }
     .name {
       font-size: 22px;
       font-weight: 700;
       color: #000000;
-      margin-bottom: 3px;
-      text-align: center;         
     }
-    .contact {
+    .contact-block {
+      margin-top: 4px;
       font-size: 12px;
       color: #000000;
-      text-align: center;        
+      line-height: 1.45;
     }
-    .header-line {
-      height: 1px;
-      background: #9ca3af;
-      margin-top: 10px;
+    .contact-block div + div {
+      margin-top: 2px;
     }
 
     .content {
@@ -238,7 +225,6 @@ export function generateAstraResumeHTML({
       font-weight: 700;
       color: #000000;
       margin-bottom: 3px;
-      text-align: center;          
       page-break-after: avoid;
       break-after: avoid;
     }
@@ -281,8 +267,12 @@ export function generateAstraResumeHTML({
   <div class="header">
     <div class="name">${fullName || "Your Name"}</div>
     ${
-      hasContact && contactLine
-        ? `<div class="contact">${contactLine}</div>`
+      hasContact
+        ? `<div class="contact-block">
+            ${contact?.phone ? `<div>${contact.phone}</div>` : ""}
+            ${contact?.email ? `<div>${contact.email}</div>` : ""}
+            ${addressBlock ? `<div>${addressBlock}</div>` : ""}
+          </div>`
         : ""
     }
   </div>
@@ -375,9 +365,9 @@ export function generateAstraResumeHTML({
   `;
 }
 
-export async function downloadAstraResumePDF(data: ResumeData): Promise<void> {
+export async function downloadVegaResumePDF(data: ResumeData): Promise<void> {
   try {
-    const html = generateAstraResumeHTML(data);
+    const html = generateVegaResumeHTML(data);
 
     const { uri } = await Print.printToFileAsync({
       html,
