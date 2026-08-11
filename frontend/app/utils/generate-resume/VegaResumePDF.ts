@@ -2,9 +2,9 @@ import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { Alert } from "react-native";
 import { formatDate } from "@/app/utils/formatDate";
-import { ResumeData } from "../types/resume";
+import { ResumeData } from "../../types/resume";
 
-export function generateOrionResumeHTML({
+export function generateVegaResumeHTML({
   contact,
   about,
   experiences,
@@ -33,15 +33,9 @@ export function generateOrionResumeHTML({
   const hasCertificates = certificates.length > 0;
   const hasAwards = awards.length > 0;
 
-  const contactLine = [
-    contact?.phone,
-    contact?.email,
-    [contact?.city, contact?.address, contact?.postalCode]
-      .filter(Boolean)
-      .join(", ") || contact?.city,
-  ]
+  const addressBlock = [contact?.city, contact?.address, contact?.postalCode]
     .filter(Boolean)
-    .join(" | ");
+    .join(", ");
 
   const skillsText = skills
     .filter((s) => s.name)
@@ -61,14 +55,12 @@ export function generateOrionResumeHTML({
   const experienceItems = experiences
     .map((exp) => {
       const companyLine = [exp.companyName, exp.city].filter(Boolean).join(" | ");
-
       const dateRange =
         exp.startDate || exp.endDate || exp.currentlyWorkHere
           ? `${formatDate(exp.startDate)}${exp.startDate ? " - " : ""}${
               exp.currentlyWorkHere ? "Present" : formatDate(exp.endDate)
             }`
           : "";
-
       const titleLine = [exp.jobTitle, dateRange].filter(Boolean).join(" | ");
 
       return `
@@ -88,7 +80,6 @@ export function generateOrionResumeHTML({
   const educationItems = educations
     .map((edu) => {
       const schoolLine = [edu.school, edu.city].filter(Boolean).join(" | ");
-
       const degreeLine = [
         edu.degree,
         edu.graduationDate ? formatDate(edu.graduationDate) : null,
@@ -209,11 +200,15 @@ export function generateOrionResumeHTML({
       font-size: 22px;
       font-weight: 700;
       color: #000000;
-      margin-bottom: 3px;
     }
-    .contact {
+    .contact-block {
+      margin-top: 4px;
       font-size: 12px;
       color: #000000;
+      line-height: 1.45;
+    }
+    .contact-block div + div {
+      margin-top: 2px;
     }
 
     .content {
@@ -272,8 +267,12 @@ export function generateOrionResumeHTML({
   <div class="header">
     <div class="name">${fullName || "Your Name"}</div>
     ${
-      hasContact && contactLine
-        ? `<div class="contact">${contactLine}</div>`
+      hasContact
+        ? `<div class="contact-block">
+            ${contact?.phone ? `<div>${contact.phone}</div>` : ""}
+            ${contact?.email ? `<div>${contact.email}</div>` : ""}
+            ${addressBlock ? `<div>${addressBlock}</div>` : ""}
+          </div>`
         : ""
     }
   </div>
@@ -366,9 +365,9 @@ export function generateOrionResumeHTML({
   `;
 }
 
-export async function downloadOrionResumePDF(data: ResumeData): Promise<void> {
+export async function downloadVegaResumePDF(data: ResumeData): Promise<void> {
   try {
-    const html = generateOrionResumeHTML(data);
+    const html = generateVegaResumeHTML(data);
 
     const { uri } = await Print.printToFileAsync({
       html,

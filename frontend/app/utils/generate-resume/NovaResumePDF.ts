@@ -2,7 +2,7 @@ import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { Alert } from "react-native";
 import { formatDate } from "@/app/utils/formatDate";
-import { ResumeData } from "../types/resume";
+import { ResumeData } from "../../types/resume";
 
 export function generateNovaResumeHTML({
   contact,

@@ -3,7 +3,8 @@ import { useEffect } from "react";
 import { StatusBar, useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { debugResumes, initDatabase } from "./utils/database";
+import { debugResumes, initDatabase } from "./db/resumeDatabase";
+import { debugCoverLetters, initCoverLetterDatabase } from "./db/coverLetterDatabase";
 
 export default function RootLayout() {
   const scheme = useColorScheme();
@@ -14,7 +15,15 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
+    initCoverLetterDatabase();
+  }, []);
+
+  useEffect(() => {
     debugResumes();
+  }, []);
+
+  useEffect(() => {
+    debugCoverLetters();
   }, []);
 
   return (
@@ -26,7 +35,8 @@ export default function RootLayout() {
         />
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="editor" options={{ headerShown: false }} />
+          
+          <Stack.Screen name="contact/index" options={{ headerShown: false }} />
 
           <Stack.Screen name="experience/index" options={{ headerShown: false }} />
           <Stack.Screen name="experience/[id]" options={{ headerShown: false }} />
@@ -37,7 +47,7 @@ export default function RootLayout() {
           <Stack.Screen name="skill/index" options={{ headerShown: false }} />
           <Stack.Screen name="skill/[id]" options={{ headerShown: false }} />
           
-          <Stack.Screen name="additional/index" options={{ headerShown: false }} />
+          <Stack.Screen name="about/index" options={{ headerShown: false }} />
 
           <Stack.Screen name="language/index" options={{ headerShown: false }} />
           <Stack.Screen name="language/[id]" options={{ headerShown: false }} />
@@ -54,10 +64,16 @@ export default function RootLayout() {
           <Stack.Screen name="custom/index" options={{ headerShown: false }} />
           <Stack.Screen name="custom/[id]" options={{ headerShown: false }} />
 
-          <Stack.Screen name="resume-full-preview" options={{ headerShown: false }} />
+          <Stack.Screen name="additional/index" options={{ headerShown: false }} />
 
-          <Stack.Screen name="about" options={{ headerShown: false }} />
-          <Stack.Screen name="preview" options={{ headerShown: false }} />
+          <Stack.Screen name="resume-preview/index" options={{ headerShown: false }} />
+
+          <Stack.Screen name="header/index" options={{ headerShown: false }} />
+          <Stack.Screen name="body/index" options={{ headerShown: false }} />
+          <Stack.Screen name="footer/index" options={{ headerShown: false }} />
+          <Stack.Screen name="coverletter-preview/index" options={{ headerShown: false }} />
+
+          <Stack.Screen name="resume-full-preview" options={{ headerShown: false }} />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>

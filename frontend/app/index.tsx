@@ -13,7 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter, useFocusEffect } from "expo-router";
 import { useState, useCallback } from "react";
-import { getAllResumes, getResume } from "./utils/database";
+import { getAllResumes, getResume } from "./db/resumeDatabase";
 import { useResumeStore } from "./store/resumeStore";
 import { useDeleteResume } from "./hooks/useDeleteResume";
 import { formatUpdatedDate } from "./utils/formatDate";
@@ -67,7 +67,7 @@ export default function HomeScreen() {
 
   const handleCreateResume = () => {
     resetAll();
-    router.push("/editor");
+    router.push("/contact");
   };
 
   const handleOpenResume = (id: number) => {
@@ -75,7 +75,7 @@ export default function HomeScreen() {
       const resume = getResume(id);
       if (resume) {
         loadResume(resume.data, resume.id);
-        router.push("/editor");
+        router.push("/contact");
       }
     } catch (error) {
       console.error("Failed to open resume:", error);
@@ -107,7 +107,7 @@ export default function HomeScreen() {
 
           <Pressable
             className="h-[64px] flex-row items-center justify-between rounded-[14px] bg-gray-100 px-[18px]"
-            onPress={() => router.push("/cover-letter")}
+            onPress={() => router.push("/header")}
           >
             <View className="flex-row items-center gap-3">
               <Image

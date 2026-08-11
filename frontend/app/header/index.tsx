@@ -8,9 +8,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import ContactForm from "./components/resume/ContactForm";
+import HeaderForm from "../components/cover-letter/HeaderForm";
 
-export default function EditorPage() {
+export default function HeaderPage() {
   const router = useRouter()
 
   return (
@@ -36,29 +36,29 @@ export default function EditorPage() {
               </Pressable>
 
               <Text className="text-2xl font-semibold text-gray-900">
-                Contact Details
+                Header
               </Text>
             </View>
 
               <Text className="text-base leading-6 text-gray-600">
-                Provide your basic information so employers can reach you.
+                Provide your basic information so employers can contact you.
               </Text>
             </View>
 
           {/* Contact Form */}
           <View className="mt-8">
-            <ContactForm />
+            <HeaderForm />
           </View>
         </ScrollView>
 
         {/* Fixed Bottom Button */}
         <View className="absolute bottom-0 left-0 right-0 bg-white px-5 py-4">
           <Pressable
-            onPress={() => router.push("/experience")}
+            onPress={() => router.push("/body")}
             className="h-14 flex-row items-center justify-center rounded-lg bg-cyan-400"
           >
             <Text className="text-base font-medium text-white">
-              Continue to Experience
+              Continue to Body
             </Text>
 
             <MaterialIcons

@@ -132,7 +132,7 @@ export default function AdditionalPage() {
         {/* Bottom button — skip / continue to preview */}
         <View className="absolute bottom-0 left-0 right-0 bg-white px-5 py-4">
           <Pressable
-            onPress={() => router.push("/preview")}
+            onPress={() => router.push("/resume-preview")}
             className="h-14 flex-row items-center justify-center rounded-lg bg-cyan-400"
           >
             <Text className="text-base font-medium text-white">

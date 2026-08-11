@@ -1,5 +1,5 @@
 import { Alert } from "react-native";
-import { deleteResume as deleteResumeFromDB } from "../utils/database";
+import { deleteResume as deleteResumeFromDB } from "../db/resumeDatabase";
 import { useResumeStore } from "../store/resumeStore";
 
 type ResumeItem = {

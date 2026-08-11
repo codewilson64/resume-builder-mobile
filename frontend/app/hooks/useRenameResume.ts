@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Alert } from "react-native";
-import { renameResume as renameResumeFromDB } from "../utils/database";
+import { renameResume as renameResumeFromDB } from "../db/resumeDatabase";
 
 type ResumeItem = {
   id: number;

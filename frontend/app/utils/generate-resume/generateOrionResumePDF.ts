@@ -2,9 +2,9 @@ import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { Alert } from "react-native";
 import { formatDate } from "@/app/utils/formatDate";
-import { ResumeData } from "../types/resume";
+import { ResumeData } from "../../types/resume";
 
-export function generateAstraResumeHTML({
+export function generateOrionResumeHTML({
   contact,
   about,
   experiences,
@@ -204,24 +204,16 @@ export function generateAstraResumeHTML({
 
     .header {
       padding: 28px 36px 32px 36px;
-      text-align: center;        
     }
     .name {
       font-size: 22px;
       font-weight: 700;
       color: #000000;
       margin-bottom: 3px;
-      text-align: center;         
     }
     .contact {
       font-size: 12px;
       color: #000000;
-      text-align: center;        
-    }
-    .header-line {
-      height: 1px;
-      background: #9ca3af;
-      margin-top: 10px;
     }
 
     .content {
@@ -238,7 +230,6 @@ export function generateAstraResumeHTML({
       font-weight: 700;
       color: #000000;
       margin-bottom: 3px;
-      text-align: center;          
       page-break-after: avoid;
       break-after: avoid;
     }
@@ -375,9 +366,9 @@ export function generateAstraResumeHTML({
   `;
 }
 
-export async function downloadAstraResumePDF(data: ResumeData): Promise<void> {
+export async function downloadOrionResumePDF(data: ResumeData): Promise<void> {
   try {
-    const html = generateAstraResumeHTML(data);
+    const html = generateOrionResumeHTML(data);
 
     const { uri } = await Print.printToFileAsync({
       html,

@@ -12,20 +12,21 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { downloadOrionResumePDF } from "./utils/generateOrionResumePDF";
-import { useResumeStore } from "./store/resumeStore";
+import { downloadOrionResumePDF } from "../utils/generate-resume/generateOrionResumePDF";
+import { useResumeStore } from "../store/resumeStore";
 
-import Astra from "./components/template/Astra";
-import Orion from "./components/template/Orion";
-import { downloadAstraResumePDF } from "./utils/generateAstraResumePDF";
-import { saveResume } from "./utils/database";
-import { useResumePager } from "./hooks/useResumePager";
-import Aurora from "./components/template/Aurora";
-import { downloadAuroraResumePDF } from "./utils/AuroraResumePDF";
-import Vega from "./components/template/Vega";
-import { downloadVegaResumePDF } from "./utils/VegaResumePDF";
-import Nova from "./components/template/Nova";
-import { downloadNovaResumePDF } from "./utils/NovaResumePDF";
+import Astra from "../components/resume-template/Astra";
+import Orion from "../components/resume-template/Orion";
+import Vega from "../components/resume-template/Vega";
+import Nova from "../components/resume-template/Nova";
+import Aurora from "../components/resume-template/Aurora";
+
+import { downloadAstraResumePDF } from "../utils/generate-resume/generateAstraResumePDF";
+import { saveResume } from "../db/resumeDatabase";
+import { useResumePager } from "../hooks/useResumePager";
+import { downloadAuroraResumePDF } from "../utils/generate-resume/AuroraResumePDF";
+import { downloadVegaResumePDF } from "../utils/generate-resume/VegaResumePDF";
+import { downloadNovaResumePDF } from "../utils/generate-resume/NovaResumePDF";
 
 const { width: screenWidth } = Dimensions.get("window");
 

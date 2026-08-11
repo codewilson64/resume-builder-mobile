@@ -16,7 +16,7 @@ import {
 } from "../types/resume";
 
 type ResumeStore = {
-  currentResumeId: number | null; // Track which resume is currently loaded (null = new resume)
+  currentResumeId: number | null; 
   contact: ContactDetails;
   about: About;
   experiences: Experience[];

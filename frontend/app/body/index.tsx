@@ -8,9 +8,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import AboutMeForm from "./components/resume/AboutMeForm";
+import BodyForm from "../components/cover-letter/BodyForm";
 
-export default function AboutPage() {
+export default function BodyPage() {
   const router = useRouter();
 
   return (
@@ -40,29 +40,28 @@ export default function AboutPage() {
             </Pressable>
 
             <Text className="text-2xl font-semibold text-gray-900">
-              About Me
+              Body
             </Text>
           </View>
 
           <Text className="mt-2 text-base leading-6 text-gray-600">
-            Write a short summary about yourself, your experience, and your
-            career goals.
+            Introduce yourself to the recruiters.
           </Text>
 
           {/* About Me Form */}
           <View className="mt-8">
-            <AboutMeForm />
+            <BodyForm />
           </View>
         </ScrollView>
 
         {/* Fixed Bottom Button */}
         <View className="absolute bottom-0 left-0 right-0 bg-white px-5 py-4">
           <Pressable
-            onPress={() => router.push("/additional")}
+            onPress={() => router.push("/footer")}
             className="h-14 flex-row items-center justify-center rounded-lg bg-cyan-400"
           >
             <Text className="text-base font-medium text-white">
-              Save & Continue
+              Continue to Footer
             </Text>
 
             <MaterialIcons
