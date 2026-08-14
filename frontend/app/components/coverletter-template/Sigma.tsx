@@ -10,7 +10,7 @@ const scale = (screenWidth - 110) / A4_WIDTH;
 const scaledWidth = A4_WIDTH * scale;
 const scaledHeight = A4_HEIGHT * scale;
 
-export default function Classic() {
+export default function Sigma() {
   const { header, body, footer } = useCoverLetterStore();
 
   const fullName = `${header?.firstName ?? ""} ${header?.lastName ?? ""}`.trim();
@@ -44,13 +44,13 @@ export default function Classic() {
         }}
       >
         {/* Header - top left */}
-        <View className="px-10 pt-12">
+        <View className="px-10 pt-12 items-end">
           <Text className="text-2xl font-bold text-black">
             {fullName || "Your Name"}
           </Text>
 
           {contactItems.length > 0 ? (
-            <View className="mt-1">
+            <View className="mt-1 items-end">
                 {contactItems.map((item, index) => (
                 <Text key={index} className="text-sm text-black">
                     {item}

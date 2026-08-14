@@ -9,7 +9,11 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": false
+      "supportsTablet": false,
+      "bundleIdentifier": "com.codewilson64.resumelab",
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -31,7 +35,8 @@
       [
         "react-native-google-mobile-ads",
         {
-          "androidAppId": "ca-app-pub-1972950748945293~3703804227"
+          "androidAppId": "ca-app-pub-1972950748945293~3703804227",
+          "iosAppId": "ca-app-pub-1972950748945293~1677847040"
         }
       ],
       [

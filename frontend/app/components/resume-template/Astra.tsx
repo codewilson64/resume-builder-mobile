@@ -326,8 +326,17 @@ function ResumeSection({
 }) {
   return (
     <View className="mb-5">
-      <Text className="text-base text-center font-bold text-black">{title}</Text>
-      <View className="mt-1 mb-2 h-px bg-gray-400" />
+      <View
+        style={{
+          borderBottomWidth: 1.3,
+          borderBottomColor: "#9CA3AF",
+          paddingBottom: 4,
+          marginBottom: 8,
+        }}
+      >
+        <Text className="text-base text-center font-bold text-black">{title}</Text>
+      </View>
+
       {children}
     </View>
   );

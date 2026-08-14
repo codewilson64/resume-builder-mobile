@@ -3,12 +3,21 @@ import * as Sharing from "expo-sharing";
 import { Alert } from "react-native";
 import { CoverLetterData } from "../../types/cover-letter";
 
-export function generateClassicCoverLetterHTML({ header, body, footer }: CoverLetterData): string {
+export function generateClassicCoverLetterHTML({
+  header,
+  body,
+  footer,
+}: CoverLetterData): string {
   const fullName = `${header?.firstName ?? ""} ${header?.lastName ?? ""}`.trim();
 
-  const hasContact = header?.email || header?.phone;
+  const contactItems = [header?.email, header?.phone].filter(Boolean);
 
-  const contactLine = [header?.email, header?.phone].filter(Boolean).join(" | ");
+  const contactBlock =
+    contactItems.length > 0
+      ? contactItems
+          .map((item) => `<div class="contact-item">${item}</div>`)
+          .join("")
+      : "";
 
   return `
 <!DOCTYPE html>
@@ -42,11 +51,16 @@ export function generateClassicCoverLetterHTML({ header, body, footer }: CoverLe
       font-size: 22px;
       font-weight: 700;
       color: #000000;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
-    .contact {
+    .contact-item {
       font-size: 13px;
       color: #000000;
+      line-height: 1.5;
+      margin-bottom: 2px;
+    }
+    .contact-item:last-child {
+      margin-bottom: 0;
     }
 
     .content {
@@ -72,11 +86,7 @@ export function generateClassicCoverLetterHTML({ header, body, footer }: CoverLe
 <body>
   <div class="header">
     <div class="name">${fullName || "Your Name"}</div>
-    ${
-      hasContact && contactLine
-        ? `<div class="contact">${contactLine}</div>`
-        : ""
-    }
+    ${contactBlock}
   </div>
 
   <div class="content">

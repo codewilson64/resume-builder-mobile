@@ -12,7 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { downloadOrionResumePDF } from "../utils/generate-resume/generateOrionResumePDF";
+import { downloadOrionResumePDF } from "../utils/generate-resume/OrionResumePDF";
 import { useResumeStore } from "../store/resumeStore";
 
 import Astra from "../components/resume-template/Astra";
@@ -21,8 +21,8 @@ import Vega from "../components/resume-template/Vega";
 import Nova from "../components/resume-template/Nova";
 import Aurora from "../components/resume-template/Aurora";
 
-import { downloadAstraResumePDF } from "../utils/generate-resume/generateAstraResumePDF";
-import { saveResume } from "../db/resumeDatabase";
+import { downloadAstraResumePDF } from "../utils/generate-resume/AstraResumePDF";
+import { getResume, saveResume } from "../db/resumeDatabase";
 import { useResumePager } from "../hooks/useResumePager";
 import { downloadAuroraResumePDF } from "../utils/generate-resume/AuroraResumePDF";
 import { downloadVegaResumePDF } from "../utils/generate-resume/VegaResumePDF";
@@ -110,10 +110,19 @@ export default function PreviewPage() {
         downloadOrionResumePDF(data);
       }
 
+      let name = "My Resume";
+
+      if (currentResumeId) {
+        const existing = getResume(currentResumeId);
+        if (existing?.name) {
+          name = existing.name;
+        }
+      }
+
       const resumeId = saveResume(
         data,
         selectedStyle,
-        "My Resume",      
+        name,      
         currentResumeId ?? undefined
       );
 
@@ -141,7 +150,7 @@ export default function PreviewPage() {
           showsVerticalScrollIndicator={false}
           contentContainerClassName="px-5 pt-8 pb-32"
           style={{ backgroundColor: "#FFFFFF" }}
-          contentContainerStyle={{ backgroundColor: "#FFFFFF" }}
+          contentContainerStyle={{ backgroundColor: "#F9F9F9" }}
         >
           {/* Header */}
           <View className="flex-row items-center gap-2">
@@ -231,7 +240,7 @@ export default function PreviewPage() {
         </ScrollView>
 
         {/* Bottom Button */}
-        <View className="absolute bottom-0 left-0 right-0 bg-white px-5 py-4">
+        <View className="absolute bottom-0 left-0 right-0 bg-[#F9F9F9] px-5 py-4">
           <Pressable
             className="h-14 flex-row items-center justify-center rounded-lg bg-cyan-400"
             onPress={handleDownload}

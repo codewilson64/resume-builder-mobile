@@ -10,12 +10,15 @@ const scale = (screenWidth - 110) / A4_WIDTH;
 const scaledWidth = A4_WIDTH * scale;
 const scaledHeight = A4_HEIGHT * scale;
 
-export default function Classic() {
+export default function Modern() {
   const { header, body, footer } = useCoverLetterStore();
 
   const fullName = `${header?.firstName ?? ""} ${header?.lastName ?? ""}`.trim();
 
-  const contactItems = [header?.email, header?.phone].filter(Boolean);
+  const contactItems = [
+    header?.email,
+    header?.phone,
+  ].filter(Boolean);
 
   return (
     <View
@@ -43,21 +46,34 @@ export default function Classic() {
           ],
         }}
       >
-        {/* Header - top left */}
-        <View className="px-10 pt-12">
-          <Text className="text-2xl font-bold text-black">
-            {fullName || "Your Name"}
-          </Text>
+        {/* Header - name left, contact block right */}
+        <View className="flex-row justify-between items-start px-10 pt-12">
+          {/* Left: Name */}
+          <View className="flex-1 pr-6">
+            <Text className="text-2xl font-bold text-black">
+              {fullName || "Your Name"}
+            </Text>
+          </View>
 
-          {contactItems.length > 0 ? (
-            <View className="mt-1">
-                {contactItems.map((item, index) => (
-                <Text key={index} className="text-sm text-black">
-                    {item}
+          {/* Right: Contact details as a vertical block */}
+          <View className="items-end">
+            {contactItems.length > 0 ? (
+              contactItems.map((item, index) => (
+                <Text
+                  key={index}
+                  className="text-sm text-black text-right"
+                  style={{ marginTop: index === 0 ? 0 : 4 }}
+                >
+                  {item}
                 </Text>
-                ))}
-            </View>
-            ) : null}
+              ))
+            ) : (
+              <Text className="text-sm text-gray-400 text-right">
+                email@example.com{"\n"}
+                +1 234 567 890
+              </Text>
+            )}
+          </View>
         </View>
 
         {/* Body */}

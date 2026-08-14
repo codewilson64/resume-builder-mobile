@@ -229,8 +229,9 @@ export function generateVegaResumeHTML({
       break-after: avoid;
     }
     .divider {
-      height: 1px;
-      background: #9ca3af;
+      height: 0;
+      border: none;
+      border-top: 1px solid #9ca3af;
       margin-bottom: 6px;
       page-break-after: avoid;
       break-after: avoid;

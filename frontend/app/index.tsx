@@ -14,29 +14,52 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter, useFocusEffect } from "expo-router";
 import { useState, useCallback } from "react";
 import { getAllResumes, getResume } from "./db/resumeDatabase";
+import {
+  getAllCoverLetters,
+  getCoverLetter,
+  renameCoverLetter,
+} from "./db/coverLetterDatabase";
 import { useResumeStore } from "./store/resumeStore";
+import { useCoverLetterStore } from "./store/coverLetterStore";
 import { useDeleteResume } from "./hooks/useDeleteResume";
 import { formatUpdatedDate } from "./utils/formatDate";
 import { useRenameResume } from "./hooks/useRenameResume";
 import RenameModal from "./components/RenameModal";
+import { useDeleteCoverLetter } from "./hooks/useDeleteCoverLetter";
 
-type ResumeItem = {
+import {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from "react-native-google-mobile-ads";
+
+type ListItem = {
   id: number;
   name: string;
   template: string;
   updated_at: string;
 };
 
+type Tab = "resumes" | "coverLetters";
+
 export default function HomeScreen() {
   const router = useRouter();
-  const [resumes, setResumes] = useState<ResumeItem[]>([]);
+  const [activeTab, setActiveTab] = useState<Tab>("resumes");
+  const [resumes, setResumes] = useState<ListItem[]>([]);
+  const [coverLetters, setCoverLetters] = useState<ListItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [openMenuId, setOpenMenuId] = useState<number | null>(null); 
-  
-  const loadResume = useResumeStore((state) => state.loadResume);
-  const resetAll = useResumeStore((state) => state.resetAll);
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
 
-  const { handleDelete } = useDeleteResume(setResumes, setOpenMenuId);
+  // Resume store
+  const loadResume = useResumeStore((state) => state.loadResume);
+  const resetAllResume = useResumeStore((state) => state.resetAll);
+
+  // Cover letter store
+  const loadCoverLetter = useCoverLetterStore((state) => state.loadCoverLetter);
+  const resetAllCoverLetter = useCoverLetterStore((state) => state.resetAll);
+
+  const { handleDelete: handleDeleteResume } = useDeleteResume(setResumes, setOpenMenuId);
+  const { handleDelete: handleDeleteCoverLetter } = useDeleteCoverLetter(setCoverLetters, setOpenMenuId);
 
   const {
     isModalVisible,
@@ -47,26 +70,32 @@ export default function HomeScreen() {
     confirmRename,
   } = useRenameResume(setResumes, setOpenMenuId);
 
+  // Cover letter rename modal state
+  const [isCoverRenameVisible, setIsCoverRenameVisible] = useState(false);
+  const [coverRenameId, setCoverRenameId] = useState<number | null>(null);
+  const [coverRenameValue, setCoverRenameValue] = useState("");
+
   useFocusEffect(
     useCallback(() => {
-      const loadResumes = () => {
+      const loadData = () => {
         try {
           setLoading(true);
-          const data = getAllResumes();
-          setResumes(data);
+          setResumes(getAllResumes());
+          setCoverLetters(getAllCoverLetters());
         } catch (error) {
-          console.error("Failed to load resumes:", error);
+          console.error("Failed to load data:", error);
         } finally {
           setLoading(false);
         }
       };
 
-      loadResumes();
+      loadData();
     }, [])
   );
 
+  // ---------- Resume handlers ----------
   const handleCreateResume = () => {
-    resetAll();
+    resetAllResume();
     router.push("/contact");
   };
 
@@ -82,10 +111,64 @@ export default function HomeScreen() {
     }
   };
 
+  // ---------- Cover Letter handlers ----------
+  const handleCreateCoverLetter = () => {
+    resetAllCoverLetter();
+    router.push("/header");
+  };
+
+  const handleOpenCoverLetter = (id: number) => {
+    try {
+      const coverLetter = getCoverLetter(id);
+      if (coverLetter) {
+        loadCoverLetter(coverLetter.data, coverLetter.id);
+        router.push("/header");
+      }
+    } catch (error) {
+      console.error("Failed to open cover letter:", error);
+    }
+  };
+
+  const openCoverRenameModal = (id: number, name: string) => {
+    setCoverRenameId(id);
+    setCoverRenameValue(name);
+    setIsCoverRenameVisible(true);
+    setOpenMenuId(null);
+  };
+
+  const closeCoverRenameModal = () => {
+    setIsCoverRenameVisible(false);
+    setCoverRenameId(null);
+    setCoverRenameValue("");
+  };
+
+  const confirmCoverRename = () => {
+    if (coverRenameId == null || !coverRenameValue.trim()) return;
+
+    try {
+      renameCoverLetter(coverRenameId, coverRenameValue.trim());
+      setCoverLetters((prev) =>
+        prev.map((item) =>
+          item.id === coverRenameId
+            ? { ...item, name: coverRenameValue.trim() }
+            : item
+        )
+      );
+      closeCoverRenameModal();
+    } catch (error) {
+      console.error("Failed to rename cover letter:", error);
+    }
+  };
+
   const toggleMenu = (id: number) => {
     setOpenMenuId((prev) => (prev === id ? null : id));
   };
 
+  const currentList = activeTab === "resumes" ? resumes : coverLetters;
+  const emptyText =
+    activeTab === "resumes"
+      ? "No resumes yet. Create your first one!"
+      : "No cover letters yet. Create your first one!";
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -107,7 +190,7 @@ export default function HomeScreen() {
 
           <Pressable
             className="h-[64px] flex-row items-center justify-between rounded-[14px] bg-gray-100 px-[18px]"
-            onPress={() => router.push("/header")}
+            onPress={handleCreateCoverLetter}
           >
             <View className="flex-row items-center gap-3">
               <Image
@@ -123,50 +206,87 @@ export default function HomeScreen() {
           </Pressable>
         </View>
 
-        {/* Resume List */}
+        {/* Tabs + List */}
         <View className="mt-8 flex-1">
-          <Text className="mb-4 text-2xl font-bold text-gray-900">
-            My Resumes
-          </Text>
+          {/* Tab buttons */}
+          <View className="mb-4 flex-row gap-2">
+            <Pressable
+              onPress={() => {
+                setActiveTab("resumes");
+                setOpenMenuId(null);
+              }}
+              className={`rounded-full px-4 py-2 ${
+                activeTab === "resumes" ? "bg-cyan-400" : "bg-gray-100"
+              }`}
+            >
+              <Text
+                className={`text-[15px] font-semibold ${
+                  activeTab === "resumes" ? "text-white" : "text-gray-600"
+                }`}
+              >
+                Resumes
+              </Text>
+            </Pressable>
+
+            <Pressable
+              onPress={() => {
+                setActiveTab("coverLetters");
+                setOpenMenuId(null);
+              }}
+              className={`rounded-full px-4 py-2 ${
+                activeTab === "coverLetters" ? "bg-cyan-400" : "bg-gray-100"
+              }`}
+            >
+              <Text
+                className={`text-[15px] font-semibold ${
+                  activeTab === "coverLetters" ? "text-white" : "text-gray-600"
+                }`}
+              >
+                Cover Letters
+              </Text>
+            </Pressable>
+          </View>
 
           {loading ? (
             <View className="flex-1 items-center justify-center">
               <ActivityIndicator size="large" color="#06b6d4" />
             </View>
-          ) : resumes.length === 0 ? (
+          ) : currentList.length === 0 ? (
             <View className="flex-1 items-center justify-center">
-              <Text className="text-base text-gray-500">
-                No resumes yet. Create your first one!
-              </Text>
+              <Text className="text-base text-gray-500">{emptyText}</Text>
             </View>
           ) : (
             <ScrollView
               showsVerticalScrollIndicator={false}
               contentContainerClassName="gap-3 pb-5"
             >
-              {resumes.map((resume) => (
-                <View key={resume.id} className="relative">
+              {currentList.map((item) => (
+                <View key={`${activeTab}-${item.id}`} className="relative">
                   <Pressable
                     className="min-h-[78px] flex-row items-center justify-between rounded-[14px] border border-gray-200 bg-gray-50 px-[18px] py-[14px]"
                     onPress={() => {
-                      setOpenMenuId(null); 
-                      handleOpenResume(resume.id);
+                      setOpenMenuId(null);
+                      if (activeTab === "resumes") {
+                        handleOpenResume(item.id);
+                      } else {
+                        handleOpenCoverLetter(item.id);
+                      }
                     }}
                   >
                     <View className="flex-1 pr-4">
                       <Text className="mb-[5px] text-[17px] font-semibold text-gray-900">
-                        {resume.name}
+                        {item.name}
                       </Text>
                       <Text className="text-[13px] text-gray-500">
-                        {formatUpdatedDate(resume.updated_at)}
+                        {formatUpdatedDate(item.updated_at)}
                       </Text>
                     </View>
 
-                    {/* Triple dots button */}
+                    {/* Triple dots */}
                     <Pressable
                       onPress={(e) => {
                         e.stopPropagation?.();
-                        toggleMenu(resume.id);
+                        toggleMenu(item.id);
                       }}
                       hitSlop={12}
                       className="h-10 w-10 items-center justify-center rounded-full"
@@ -180,17 +300,32 @@ export default function HomeScreen() {
                   </Pressable>
 
                   {/* Dropdown Menu */}
-                  {openMenuId === resume.id && (
+                  {openMenuId === item.id && (
                     <View className="absolute right-6 top-[60px] z-50 min-w-[140px] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
                       <Pressable
-                        onPress={() => openRenameModal(resume.id, resume.name)}
+                        onPress={() => {
+                          if (activeTab === "resumes") {
+                            openRenameModal(item.id, item.name);
+                          } else {
+                            openCoverRenameModal(item.id, item.name);
+                          }
+                        }}
                         className="flex-row items-center gap-3 border-b border-gray-100 px-4 py-3 active:bg-gray-100"
                       >
                         <MaterialIcons name="edit" size={20} color="#374151" />
-                        <Text className="text-[15px] font-medium text-gray-800">Rename</Text>
+                        <Text className="text-[15px] font-medium text-gray-800">
+                          Rename
+                        </Text>
                       </Pressable>
+
                       <Pressable
-                        onPress={() => handleDelete(resume.id, resume.name)}
+                        onPress={() => {
+                          if (activeTab === "resumes") {
+                            handleDeleteResume(item.id, item.name);
+                          } else {
+                            handleDeleteCoverLetter(item.id, item.name);
+                          }
+                        }}
                         className="flex-row items-center gap-3 px-4 py-3 active:bg-gray-100"
                       >
                         <MaterialIcons
@@ -209,8 +344,17 @@ export default function HomeScreen() {
             </ScrollView>
           )}
         </View>
+
+        {/* Ad */}
+        <View className="mt-3 min-h-[50px] items-center">
+          <BannerAd
+            unitId={TestIds.BANNER}
+            size={BannerAdSize.BANNER}
+          />
+        </View>
       </View>
 
+      {/* Resume Rename Modal */}
       <RenameModal
         visible={isModalVisible}
         value={inputValue}
@@ -218,20 +362,18 @@ export default function HomeScreen() {
         onCancel={closeRenameModal}
         onConfirm={confirmRename}
       />
+
+      {/* Cover Letter Rename Modal */}
+      <RenameModal
+        visible={isCoverRenameVisible}
+        value={coverRenameValue}
+        onChangeText={setCoverRenameValue}
+        onCancel={closeCoverRenameModal}
+        onConfirm={confirmCoverRename}
+      />
     </SafeAreaView>
   );
 }
 
-// import {
-//   BannerAd,
-//   BannerAdSize,
-//   TestIds,
-// } from "react-native-google-mobile-ads";
 
-        {/* Ad */}
-        {/* <View className="mt-3 min-h-[50px] items-center">
-          <BannerAd
-            unitId={TestIds.BANNER}
-            size={BannerAdSize.BANNER}
-          />
-        </View> */}
+

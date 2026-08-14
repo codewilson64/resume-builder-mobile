@@ -17,7 +17,9 @@ type Props = {
 };
 
 export default function ExperienceForm({ experienceId }: Props) {
-  const experience = useResumeStore((state) => state.experiences.find((item) => item.id === experienceId));
+  const experience = useResumeStore((state) =>
+    state.experiences.find((item) => item.id === experienceId)
+  );
   const updateExperience = useResumeStore((state) => state.updateExperience);
 
   const [showStartPicker, setShowStartPicker] = useState(false);
@@ -88,28 +90,6 @@ export default function ExperienceForm({ experienceId }: Props) {
                 : "Select date"}
             </Text>
           </Pressable>
-
-          {showStartPicker && (
-            <DateTimePicker
-              value={
-                experience.startDate
-                  ? new Date(experience.startDate)
-                  : new Date()
-              }
-              mode="date"
-              display={Platform.OS === "ios" ? "spinner" : "default"}
-              onChange={(_, selectedDate) => {
-                setShowStartPicker(false);
-                if (selectedDate) {
-                  updateExperience(
-                    experienceId,
-                    "startDate",
-                    selectedDate.toISOString()
-                  );
-                }
-              }}
-            />
-          )}
         </View>
 
         {/* End Date */}
@@ -118,7 +98,9 @@ export default function ExperienceForm({ experienceId }: Props) {
             End Date
           </Text>
           <Pressable
-            onPress={() => !experience.currentlyWorkHere && setShowEndPicker(true)}
+            onPress={() =>
+              !experience.currentlyWorkHere && setShowEndPicker(true)
+            }
             className="h-12 justify-center border-b border-gray-300 px-1"
             disabled={experience.currentlyWorkHere}
           >
@@ -138,30 +120,53 @@ export default function ExperienceForm({ experienceId }: Props) {
                   : "Select date"}
             </Text>
           </Pressable>
-
-          {showEndPicker && !experience.currentlyWorkHere && (
-            <DateTimePicker
-              value={
-                experience.endDate
-                  ? new Date(experience.endDate)
-                  : new Date()
-              }
-              mode="date"
-              display={Platform.OS === "ios" ? "spinner" : "default"}
-              onChange={(_, selectedDate) => {
-                setShowEndPicker(false);
-                if (selectedDate) {
-                  updateExperience(
-                    experienceId,
-                    "endDate",
-                    selectedDate.toISOString()
-                  );
-                }
-              }}
-            />
-          )}
         </View>
       </View>
+
+      {/* ========== DateTimePickers moved below the form ========== */}
+      {showStartPicker && (
+        <DateTimePicker
+          value={
+            experience.startDate
+              ? new Date(experience.startDate)
+              : new Date()
+          }
+          mode="date"
+          display={Platform.OS === "ios" ? "spinner" : "default"}
+          onChange={(_, selectedDate) => {
+            setShowStartPicker(false);
+            if (selectedDate) {
+              updateExperience(
+                experienceId,
+                "startDate",
+                selectedDate.toISOString()
+              );
+            }
+          }}
+          style={{ width: "100%" }} // helps on iOS
+        />
+      )}
+
+      {showEndPicker && !experience.currentlyWorkHere && (
+        <DateTimePicker
+          value={
+            experience.endDate ? new Date(experience.endDate) : new Date()
+          }
+          mode="date"
+          display={Platform.OS === "ios" ? "spinner" : "default"}
+          onChange={(_, selectedDate) => {
+            setShowEndPicker(false);
+            if (selectedDate) {
+              updateExperience(
+                experienceId,
+                "endDate",
+                selectedDate.toISOString()
+              );
+            }
+          }}
+          style={{ width: "100%" }} // helps on iOS
+        />
+      )}
 
       {/* Currently Work Here */}
       <View className="flex-row items-center justify-between">
@@ -174,7 +179,6 @@ export default function ExperienceForm({ experienceId }: Props) {
           value={experience.currentlyWorkHere}
           onValueChange={(value) => {
             updateExperience(experienceId, "currentlyWorkHere", value);
-            // Optional: clear end date when checked
             if (value) {
               updateExperience(experienceId, "endDate", null);
             }
