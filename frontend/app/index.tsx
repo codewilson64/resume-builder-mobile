@@ -8,30 +8,24 @@ import {
   ScrollView,
   Image,
   ActivityIndicator,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter, useFocusEffect } from "expo-router";
 import { useState, useCallback } from "react";
 import { getAllResumes, getResume } from "./db/resumeDatabase";
-import {
-  getAllCoverLetters,
-  getCoverLetter,
-  renameCoverLetter,
-} from "./db/coverLetterDatabase";
+
+import { getAllCoverLetters, getCoverLetter, renameCoverLetter } from "./db/coverLetterDatabase";
 import { useResumeStore } from "./store/resumeStore";
 import { useCoverLetterStore } from "./store/coverLetterStore";
 import { useDeleteResume } from "./hooks/useDeleteResume";
 import { formatUpdatedDate } from "./utils/formatDate";
 import { useRenameResume } from "./hooks/useRenameResume";
-import RenameModal from "./components/RenameModal";
-import { useDeleteCoverLetter } from "./hooks/useDeleteCoverLetter";
 
-import {
-  BannerAd,
-  BannerAdSize,
-  TestIds,
-} from "react-native-google-mobile-ads";
+import RenameModal from "./components/RenameModal"; 
+import { useDeleteCoverLetter } from "./hooks/useDeleteCoverLetter";
+import { BannerAd, BannerAdSize, TestIds,} from "react-native-google-mobile-ads";
 
 type ListItem = {
   id: number;
@@ -49,6 +43,13 @@ export default function HomeScreen() {
   const [coverLetters, setCoverLetters] = useState<ListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+
+  const adUnitId = __DEV__
+    ? TestIds.BANNER
+    : Platform.select({
+        ios: "ca-app-pub-1972950748945293/9364911166",
+        android: "ca-app-pub-1972950748945293/5372254901",
+      });
 
   // Resume store
   const loadResume = useResumeStore((state) => state.loadResume);
@@ -348,7 +349,7 @@ export default function HomeScreen() {
         {/* Ad */}
         <View className="mt-3 min-h-[50px] items-center">
           <BannerAd
-            unitId={TestIds.BANNER}
+            unitId={adUnitId!}
             size={BannerAdSize.BANNER}
           />
         </View>
