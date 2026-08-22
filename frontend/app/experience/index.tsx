@@ -75,7 +75,7 @@ export default function ExperiencePage() {
 
           {/* List of experiences */}
           <View className="mt-8 gap-4">
-            {experiences.length === 0 ? (
+            {experiences.filter((exp) => exp.jobTitle.trim() !== "" || exp.companyName.trim() !== "").length === 0 ? (
               <View className="items-center rounded-xl border border-dashed border-gray-300 py-10">
                 <MaterialIcons name="work-outline" size={32} color="#9CA3AF" />
                 <Text className="mt-3 text-sm text-gray-500">
@@ -83,43 +83,49 @@ export default function ExperiencePage() {
                 </Text>
               </View>
             ) : (
-              experiences.map((exp) => (
-                <Pressable
-                  key={exp.id}
-                  onPress={() => handleEditExperience(exp.id)}
-                  className="rounded-xl border border-gray-200 bg-white p-4"
-                >
-                  <View className="flex-row items-start justify-between">
-                    <View className="flex-1 pr-3">
-                      <Text className="text-base font-semibold text-gray-900">
-                        {exp.jobTitle || "Untitled position"}
-                      </Text>
-                      <Text className="mt-1 text-sm text-gray-600">
-                        {exp.companyName || "Company"}
-                      </Text>
-                      <Text className="mt-1 text-xs text-gray-400">
-                        {exp.startDate
-                          ? formatDate(new Date(exp.startDate))
-                          : "Start date"}
-                        {" – "}
-                        {exp.currentlyWorkHere
-                          ? "Present"
-                          : exp.endDate
-                            ? formatDate(new Date(exp.endDate))
-                            : "End date"}
-                      </Text>
-                    </View>
+              experiences
+                .filter((exp) => exp.jobTitle.trim() !== "" || exp.companyName.trim() !== "")
+                .map((exp) => (
+                  <Pressable
+                    key={exp.id}
+                    onPress={() => handleEditExperience(exp.id)}
+                    className="rounded-xl border border-gray-200 bg-white p-4"
+                  >
+                    <View className="flex-row items-start justify-between">
+                      <View className="flex-1 pr-3">
+                        <Text className="text-base font-semibold text-gray-900">
+                          {exp.jobTitle || "Untitled position"}
+                        </Text>
+                        <Text className="mt-1 text-sm text-gray-600">
+                          {exp.companyName || "Company"}
+                        </Text>
+                        <Text className="mt-1 text-xs text-gray-400">
+                          {exp.startDate
+                            ? formatDate(new Date(exp.startDate))
+                            : "Start date"}
+                          {" – "}
+                          {exp.currentlyWorkHere
+                            ? "Present"
+                            : exp.endDate
+                              ? formatDate(new Date(exp.endDate))
+                              : "End date"}
+                        </Text>
+                      </View>
 
-                    <Pressable
-                      onPress={() => removeExperience(exp.id)}
-                      hitSlop={8}
-                      className="h-8 w-8 items-center justify-center"
-                    >
-                      <MaterialIcons name="delete-outline" size={20} color="#EF4444" />
-                    </Pressable>
-                  </View>
-                </Pressable>
-              ))
+                      <Pressable
+                        onPress={() => removeExperience(exp.id)}
+                        hitSlop={8}
+                        className="h-8 w-8 items-center justify-center"
+                      >
+                        <MaterialIcons
+                          name="delete-outline"
+                          size={20}
+                          color="#EF4444"
+                        />
+                      </Pressable>
+                    </View>
+                  </Pressable>
+                ))
             )}
 
             {/* Add button */}

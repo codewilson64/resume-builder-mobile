@@ -7,8 +7,7 @@ const { width: screenWidth } = Dimensions.get("window");
 const A4_WIDTH = 794;
 const A4_HEIGHT = 1123;
 
-// Keep the smaller size we set earlier
-const scale = (screenWidth - 110) / A4_WIDTH;
+const scale = (screenWidth - 100) / A4_WIDTH;
 const scaledWidth = A4_WIDTH * scale;
 const scaledHeight = A4_HEIGHT * scale;
 
@@ -39,8 +38,21 @@ export default function Nova() {
     .filter(Boolean)
     .join(", ");
 
-  const hasExperiences = experiences.length > 0;
-  const hasEducations = educations.length > 0;
+  const validExperiences = experiences.filter(
+    (exp) =>
+      (exp.jobTitle?.trim() ?? "") !== "" ||
+      (exp.companyName?.trim() ?? "") !== ""
+  );
+
+  // Require both school AND degree
+  const validEducations = educations.filter(
+    (edu) =>
+      (edu.school?.trim() ?? "") !== "" &&
+      (edu.degree?.trim() ?? "") !== ""
+  );
+
+  const hasExperiences = validExperiences.length > 0;
+  const hasEducations = validEducations.length > 0;
   const hasSkills = skills.length > 0;
   const hasLanguages = languages.length > 0;
   const hasHobbies = hobbies.length > 0;
@@ -77,46 +89,44 @@ export default function Nova() {
         overflow: "hidden",
       }}
     >
-      {/* Scale from top-left by compensating the default center origin */}
       <View
         style={{
           width: A4_WIDTH,
           height: A4_HEIGHT,
           backgroundColor: "#FFFFFF",
           transform: [
-            // move back the amount the center-scale shifted us
             { translateX: -(A4_WIDTH * (1 - scale)) / 2 },
             { translateY: -(A4_HEIGHT * (1 - scale)) / 2 },
             { scale },
           ],
         }}
       >
-        {/* Header */}
+        {/* Header - right aligned */}
         <View className="px-8 pt-8 pb-8 items-end">
-            <Text className="text-2xl font-bold text-black">
-                {fullName || "Your Name"}
-            </Text>
+          <Text className="text-3xl font-bold text-black">
+            {fullName || "Your Name"}
+          </Text>
 
-            {hasContact ? (
-                <View className="mt-1 items-end">
-                {contact?.phone ? (
-                    <Text className="text-sm text-black">{contact.phone}</Text>
-                ) : null}
-                {contact?.email ? (
-                    <Text className="text-sm text-black">{contact.email}</Text>
-                ) : null}
-                {addressBlock ? (
-                    <Text className="text-sm text-black">{addressBlock}</Text>
-                ) : null}
-                </View>
-            ) : null}
+          {hasContact ? (
+            <View className="mt-1 items-end">
+              {contact?.phone ? (
+                <Text className="text-base text-black">{contact.phone}</Text>
+              ) : null}
+              {contact?.email ? (
+                <Text className="text-base text-black">{contact.email}</Text>
+              ) : null}
+              {addressBlock ? (
+                <Text className="text-base text-black">{addressBlock}</Text>
+              ) : null}
+            </View>
+          ) : null}
         </View>
 
         {/* Main Content */}
         <View className="px-8 pb-8">
           {about?.summary ? (
             <ResumeSection title="Summary">
-              <Text className="text-sm leading-5 text-black">
+              <Text className="text-base leading-6 text-black">
                 {about.summary}
               </Text>
             </ResumeSection>
@@ -124,14 +134,14 @@ export default function Nova() {
 
           {hasSkills && skillsText ? (
             <ResumeSection title="Skills">
-              <Text className="text-sm text-black">{skillsText}</Text>
+              <Text className="text-base text-black">{skillsText}</Text>
             </ResumeSection>
           ) : null}
 
           {hasExperiences ? (
             <ResumeSection title="Experience">
               <View className="gap-4">
-                {experiences.map((exp) => {
+                {validExperiences.map((exp) => {
                   const companyLine = [exp.companyName, exp.city]
                     .filter(Boolean)
                     .join(" | ");
@@ -154,17 +164,17 @@ export default function Nova() {
                   return (
                     <View key={exp.id}>
                       {companyLine ? (
-                        <Text className="text-sm font-semibold text-black">
+                        <Text className="text-base font-semibold text-black">
                           {companyLine}
                         </Text>
                       ) : null}
 
                       {titleLine ? (
-                        <Text className="text-sm text-black">{titleLine}</Text>
+                        <Text className="text-base text-black">{titleLine}</Text>
                       ) : null}
 
                       {exp.jobDescription ? (
-                        <Text className="mt-1 text-sm leading-5 text-black">
+                        <Text className="mt-1 text-base leading-6 text-black">
                           {exp.jobDescription}
                         </Text>
                       ) : null}
@@ -178,7 +188,7 @@ export default function Nova() {
           {hasEducations ? (
             <ResumeSection title="Education">
               <View className="gap-4">
-                {educations.map((edu) => {
+                {validEducations.map((edu) => {
                   const schoolLine = [edu.school, edu.city]
                     .filter(Boolean)
                     .join(" | ");
@@ -195,17 +205,17 @@ export default function Nova() {
                   return (
                     <View key={edu.id}>
                       {schoolLine ? (
-                        <Text className="text-sm font-semibold text-black">
+                        <Text className="text-base font-semibold text-black">
                           {schoolLine}
                         </Text>
                       ) : null}
 
                       {degreeLine ? (
-                        <Text className="text-sm text-black">{degreeLine}</Text>
+                        <Text className="text-base text-black">{degreeLine}</Text>
                       ) : null}
 
                       {edu.description ? (
-                        <Text className="mt-1 text-sm leading-5 text-black">
+                        <Text className="mt-1 text-base leading-6 text-black">
                           {edu.description}
                         </Text>
                       ) : null}
@@ -218,7 +228,7 @@ export default function Nova() {
 
           {hasLanguages && languagesText ? (
             <ResumeSection title="Languages">
-              <Text className="text-sm text-black">{languagesText}</Text>
+              <Text className="text-base text-black">{languagesText}</Text>
             </ResumeSection>
           ) : null}
 
@@ -228,19 +238,19 @@ export default function Nova() {
                 {certificates.map((cert) => (
                   <View key={cert.id}>
                     {cert.name ? (
-                      <Text className="text-sm font-semibold text-black">
+                      <Text className="text-base font-semibold text-black">
                         {cert.name}
                       </Text>
                     ) : null}
                     {cert.issuer || cert.date ? (
-                      <Text className="text-sm text-black">
+                      <Text className="text-base text-black">
                         {[cert.issuer, cert.date ? formatDate(cert.date) : null]
                           .filter(Boolean)
                           .join(" | ")}
                       </Text>
                     ) : null}
                     {cert.description ? (
-                      <Text className="mt-1 text-sm text-black">
+                      <Text className="mt-1 text-base text-black">
                         {cert.description}
                       </Text>
                     ) : null}
@@ -256,12 +266,12 @@ export default function Nova() {
                 {awards.map((award) => (
                   <View key={award.id}>
                     {award.title ? (
-                      <Text className="text-sm font-semibold text-black">
+                      <Text className="text-base font-semibold text-black">
                         {award.title}
                       </Text>
                     ) : null}
                     {award.issuer || award.date ? (
-                      <Text className="text-sm text-black">
+                      <Text className="text-base text-black">
                         {[
                           award.issuer,
                           award.date ? formatDate(award.date) : null,
@@ -271,7 +281,7 @@ export default function Nova() {
                       </Text>
                     ) : null}
                     {award.description ? (
-                      <Text className="mt-1 text-sm text-black">
+                      <Text className="mt-1 text-base text-black">
                         {award.description}
                       </Text>
                     ) : null}
@@ -283,7 +293,7 @@ export default function Nova() {
 
           {hasHobbies && hobbiesText ? (
             <ResumeSection title="Hobbies">
-              <Text className="text-sm text-black">{hobbiesText}</Text>
+              <Text className="text-base text-black">{hobbiesText}</Text>
             </ResumeSection>
           ) : null}
 
@@ -296,17 +306,17 @@ export default function Nova() {
                   >
                     <View>
                       {section.subtitle ? (
-                        <Text className="text-sm font-semibold text-black">
+                        <Text className="text-base font-semibold text-black">
                           {section.subtitle}
                         </Text>
                       ) : null}
                       {section.date ? (
-                        <Text className="text-sm text-black">
+                        <Text className="text-base text-black">
                           {formatDate(section.date)}
                         </Text>
                       ) : null}
                       {section.description ? (
-                        <Text className="mt-1 text-sm text-black">
+                        <Text className="mt-1 text-base text-black">
                           {section.description}
                         </Text>
                       ) : null}
@@ -338,7 +348,7 @@ function ResumeSection({
           marginBottom: 8,
         }}
       >
-        <Text className="text-base font-bold text-black">{title}</Text>
+        <Text className="text-lg font-bold text-black">{title}</Text>
       </View>
 
       {children}

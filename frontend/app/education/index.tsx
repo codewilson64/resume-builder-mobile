@@ -73,7 +73,7 @@ export default function EducationPage() {
 
           {/* List */}
           <View className="mt-8 gap-4">
-            {educations.length === 0 ? (
+            {educations.filter((edu) => (edu.school?.trim() ?? "") !== "" || (edu.degree?.trim() ?? "") !== "").length === 0 ? (
               <View className="items-center rounded-xl border border-dashed border-gray-300 py-10">
                 <MaterialIcons name="school" size={32} color="#9CA3AF" />
                 <Text className="mt-3 text-sm text-gray-500">
@@ -81,41 +81,43 @@ export default function EducationPage() {
                 </Text>
               </View>
             ) : (
-              educations.map((edu) => (
-                <Pressable
-                  key={edu.id}
-                  onPress={() => handleEditEducation(edu.id)}
-                  className="rounded-xl border border-gray-200 bg-white p-4"
-                >
-                  <View className="flex-row items-start justify-between">
-                    <View className="flex-1 pr-3">
-                      <Text className="text-base font-semibold text-gray-900">
-                        {edu.degree || "Untitled degree"}
-                      </Text>
-                      <Text className="mt-1 text-sm text-gray-600">
-                        {edu.school || "School"}
-                      </Text>
-                      {edu.graduationDate ? (
-                        <Text className="mt-1 text-xs text-gray-400">
-                          Graduated {formatDate(new Date(edu.graduationDate))}
+              educations
+                .filter((edu) => (edu.school?.trim() ?? "") !== "" || (edu.degree?.trim() ?? "") !== "")
+                .map((edu) => (
+                  <Pressable
+                    key={edu.id}
+                    onPress={() => handleEditEducation(edu.id)}
+                    className="rounded-xl border border-gray-200 bg-white p-4"
+                  >
+                    <View className="flex-row items-start justify-between">
+                      <View className="flex-1 pr-3">
+                        <Text className="text-base font-semibold text-gray-900">
+                          {edu.degree || "Untitled degree"}
                         </Text>
-                      ) : null}
-                    </View>
+                        <Text className="mt-1 text-sm text-gray-600">
+                          {edu.school || "School"}
+                        </Text>
+                        {edu.graduationDate ? (
+                          <Text className="mt-1 text-xs text-gray-400">
+                            Graduated {formatDate(new Date(edu.graduationDate))}
+                          </Text>
+                        ) : null}
+                      </View>
 
-                    <Pressable
-                      onPress={() => removeEducation(edu.id)}
-                      hitSlop={8}
-                      className="h-8 w-8 items-center justify-center"
-                    >
-                      <MaterialIcons
-                        name="delete-outline"
-                        size={20}
-                        color="#EF4444"
-                      />
-                    </Pressable>
-                  </View>
-                </Pressable>
-              ))
+                      <Pressable
+                        onPress={() => removeEducation(edu.id)}
+                        hitSlop={8}
+                        className="h-8 w-8 items-center justify-center"
+                      >
+                        <MaterialIcons
+                          name="delete-outline"
+                          size={20}
+                          color="#EF4444"
+                        />
+                      </Pressable>
+                    </View>
+                  </Pressable>
+                ))
             )}
 
             {/* Add button */}

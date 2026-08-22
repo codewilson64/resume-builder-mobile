@@ -25,8 +25,20 @@ export function generateAuroraResumeHTML({
     contact?.city ||
     contact?.postalCode;
 
-  const hasExperiences = experiences.length > 0;
-  const hasEducations = educations.length > 0;
+  const validExperiences = experiences.filter(
+    (exp) =>
+      (exp.jobTitle?.trim() ?? "") !== "" ||
+      (exp.companyName?.trim() ?? "") !== ""
+  );
+
+  const validEducations = educations.filter(
+    (edu) =>
+      (edu.school?.trim() ?? "") !== "" ||
+      (edu.degree?.trim() ?? "") !== ""
+  );
+
+  const hasExperiences = validExperiences.length > 0;
+  const hasEducations = validEducations.length > 0;
   const hasSkills = skills.length > 0;
   const hasLanguages = languages.length > 0;
   const hasHobbies = hobbies.length > 0;
@@ -52,7 +64,7 @@ export function generateAuroraResumeHTML({
     .map((h) => h.name)
     .join(", ");
 
-  const experienceItems = experiences
+  const experienceItems = validExperiences
     .map((exp) => {
       const companyLine = [exp.companyName, exp.city].filter(Boolean).join(" | ");
       const dateRange =
@@ -77,7 +89,7 @@ export function generateAuroraResumeHTML({
     })
     .join("");
 
-  const educationItems = educations
+  const educationItems = validEducations
     .map((edu) => {
       const schoolLine = [edu.school, edu.city].filter(Boolean).join(" | ");
       const degreeLine = [

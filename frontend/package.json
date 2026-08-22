@@ -1,11 +1,12 @@
 {
   "name": "frontend",
   "main": "expo-router/entry",
-  "version": "1.0.0",
+  "version": "1.0.0",  
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "build:ios-ipa": "eas build -p ios",
+    "build:android-development": "eas build -p android --profile development",
     "build:android-aab": "eas build -p android --profile production",
     "build:android-apk": "eas build -p android --profile preview",
     "android": "expo run:android",

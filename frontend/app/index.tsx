@@ -44,12 +44,12 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
 
-  const adUnitId = __DEV__
-    ? TestIds.BANNER
-    : Platform.select({
-        ios: "ca-app-pub-1972950748945293/9364911166",
-        android: "ca-app-pub-1972950748945293/5372254901",
-      });
+  // const adUnitId = __DEV__
+  //   ? TestIds.BANNER
+  //   : Platform.select({
+  //       ios: "ca-app-pub-1972950748945293/9364911166",
+  //       android: "ca-app-pub-1972950748945293/5372254901",
+  //     });
 
   // Resume store
   const loadResume = useResumeStore((state) => state.loadResume);
@@ -347,12 +347,12 @@ export default function HomeScreen() {
         </View>
 
         {/* Ad */}
-        <View className="mt-3 min-h-[50px] items-center">
+        {/* <View className="mt-3 min-h-[50px] items-center">
           <BannerAd
             unitId={adUnitId!}
             size={BannerAdSize.BANNER}
           />
-        </View>
+        </View> */}
       </View>
 
       {/* Resume Rename Modal */}
